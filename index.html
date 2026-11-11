@@ -299,7 +299,7 @@ const DEMO_SUBS=[
   ['Мельников Виктор Павлович','1957-09-30','+7 900 666-77-88','Новороссийский','10:00']
 ];
 if(!S.demoSubs){
-  DEMO_SUBS.forEach(([name,birth,phone,district,time],i)=>{if(!S.subs.some(s=>s.phone===phone))S.subs.push({id:'d'+i,name,birth,phone,district,time,push:true,sms:i===2,date:dAgo(i),fav:[]})});
+  DEMO_SUBS.forEach(([name,birth,phone,district,time],i)=>{if(!S.subs.some(s=>s.phone===phone))S.subs.push({id:'d'+i,name,birth,phone,district,time,push:true,date:dAgo(i),fav:[]})});
   S.demoSubs=true;save();
 }
 
@@ -507,11 +507,9 @@ function authInner(){return `
       <label class="switch" style="margin-top:10px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
       <button class="btn b-amber" style="width:100%;margin-top:12px" onclick="demoFill()">Заполнить тестовыми данными</button>`
       :`<div class="demo" style="margin-top:10px">Тестовый вход: <b>+7 900 111-22-33</b> (Иванова Валентина Петровна) <a href="javascript:void 0" onclick="$('#ph').value='+7 900 111-22-33'">вставить</a></div>`}
-      <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="sendCode()">${regMode?'Зарегистрироваться':'Получить код'}</button>
+      <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="sendCode()">${regMode?'Зарегистрироваться':'Войти'}</button>
       <p style="text-align:center;margin-bottom:0"><a href="javascript:void 0" onclick="regMode=!regMode;refreshAuth()">${regMode?'Уже регистрировались? Войти':'Нет кабинета? Зарегистрироваться'}</a></p></div>
-      <div id="st2" class="hide"><label for="cd">Код из СМС</label><input id="cd" inputmode="numeric" maxlength="4" placeholder="••••" style="font-size:1.6rem;letter-spacing:.5em;text-align:center">
-      <div class="demo" id="democode" style="margin-top:10px"></div>
-      <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="checkCode()">Войти</button></div>`;}
+`;}
 R.cabinet=()=>{
   if(!S.me) return `<h1>Личный кабинет</h1><p class="lead">Войдите или зарегистрируйтесь.</p>`;
   if(false) return `<div style="max-width:560px"><h1>${regMode?'Регистрация':'Вход в кабинет'}</h1><p class="lead">${regMode?'Заполните три поля — и каждый день вам будет приходить предупреждение о мошенниках.':'Введите номер телефона, с которым регистрировались. Мы пришлём код в СМС.'}</p>
@@ -534,7 +532,6 @@ R.cabinet=()=>{
       <label class="switch"><input type="checkbox" id="cpush" ${m.push?'checked':''}> Присылать предупреждение каждый день</label>
       <label for="ctime">Во сколько присылать</label>
       <input id="ctime" type="time" value="${esc(m.time||'10:00')}" style="max-width:170px;font-size:1.3rem">
-      <label class="switch" style="margin-top:14px"><input type="checkbox" id="csms" ${m.sms?'checked':''}> Дублировать по СМС (для кнопочного телефона)</label>
       <div class="row" style="margin-top:16px"><button class="btn b-navy" onclick="savePush()">Сохранить</button><button class="btn b-ghost" onclick="sendTodayPush()">Проверить уведомление</button></div>
     </div>
   </div>
@@ -554,17 +551,17 @@ function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<
     if(known){toast('Этот номер уже зарегистрирован — войдите');regMode=false;pendingPhone=p;refreshAuth();return}
     pendingFio=f;pendingBirth=b;pendingTime=$('#rgt').value||'10:00';
   } else if(!known){toast('Номер не найден — зарегистрируйтесь');regMode=true;pendingPhone=p;refreshAuth();return}
-  pendingPhone=p;pendingCode=String(Math.floor(1000+Math.random()*9000));$('#st1').classList.add('hide');$('#st2').classList.remove('hide');$('#democode').textContent='Тестовый режим: СМС не отправляется, код '+pendingCode+' уже подставлен — нажмите «Войти».';$('#cd').value=pendingCode;$('#cd').focus()}
+  pendingPhone=p;finishAuth()}
 function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;$('#rgpush').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
-function checkCode(){if($('#cd').value.trim()!==pendingCode){toast('Неверный код');return}
+function finishAuth(){
   let sub=S.subs.find(s=>normPh(s.phone)===normPh(pendingPhone));
   if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:pendingTime,district:'Центральный',fav:[]};S.subs.push(sub)}
-  S.me=sub;save();closeModal();toast('Вы вошли и подписаны на предупреждения');enablePush().then(ok=>{if(ok){S.me.push=true;save()}});render()}
+  S.me=sub;save();closeModal();toast('Готово! Предупреждения будут приходить в '+S.me.time);render()}
 function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('#cy').value){toast('ФИО и дата рождения обязательны');return}Object.assign(S.me,{name:f,birth:$('#cy').value,district:$('#cdst').value});sync();toast('Данные сохранены');render()}
-async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value||S.me.time;S.me.sms=$('#csms').checked;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
+async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value||S.me.time;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
 function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
 function logout(){S.me=null;save();render()}
-function unsub(){if(!confirm('Выключить ежедневные предупреждения? Включить снова можно здесь же.'))return;S.me.push=false;S.me.sms=false;sync();toast('Рассылка выключена');render()}
+function unsub(){if(!confirm('Выключить ежедневные предупреждения? Включить снова можно здесь же.'))return;S.me.push=false;sync();toast('Рассылка выключена');render()}
 
 /* ---------- ПОРТАЛ СМИ ---------- */
 R.smi=()=>{
@@ -671,8 +668,8 @@ function exportReport(){
   download('otchet-'+today()+'.csv',csv(rows));
 }
 function exportSubs(){
-  download('podpischiki-'+today()+'.csv',csv([['ФИО','Дата рождения','Возраст','Телефон','Район','Уведомление','СМС','Дата регистрации'],
-    ...S.subs.map(s=>[s.name,s.birth?new Date(s.birth).toLocaleDateString('ru-RU'):'',ageOf(s.birth),s.phone,s.district,s.push?s.time:'выкл',s.sms?'да':'нет',new Date(s.date).toLocaleDateString('ru-RU')])]));
+  download('podpischiki-'+today()+'.csv',csv([['ФИО','Дата рождения','Возраст','Телефон','Район','Уведомление','Дата регистрации'],
+    ...S.subs.map(s=>[s.name,s.birth?new Date(s.birth).toLocaleDateString('ru-RU'):'',ageOf(s.birth),s.phone,s.district,s.push?s.time:'выкл',new Date(s.date).toLocaleDateString('ru-RU')])]));
 }
 function exportAccounts(){
   download('avtory-smi-'+today()+'.csv',csv([['ФИО','Издание','Должность','Телефон','Почта','Логин','Статус','Материалов'],
@@ -826,7 +823,7 @@ A.subs=()=>{
   const q=subQ.toLowerCase();const list=S.subs.filter(s=>!q||(s.name+s.phone+s.district).toLowerCase().includes(q));
   return `<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Подписчики (${S.subs.length})</h3><button class="btn b-navy" onclick="exportSubs()">⬇ Скачать в Excel</button></div>
   <input id="subq" placeholder="🔎 Поиск по ФИО, телефону, району" value="${esc(subQ)}" style="margin:12px 0" oninput="subQ=this.value;clearTimeout(window._sq);window._sq=setTimeout(()=>{render();const i=$('#subq');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)">
-  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.push?'в '+esc(s.time):'выкл'}${s.sms?' + СМС':''}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
+  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.push?'в '+esc(s.time):'выкл'}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
   <p class="small muted">В статистике дополнительно учтены ${S.stat.base.toLocaleString('ru-RU')} демо-подписчиков.</p></div>`;
 };
 function delSub(id){if(!confirm('Удалить подписчика?'))return;S.subs=S.subs.filter(s=>s.id!==id);if(S.me&&S.me.id===id)S.me=null;save();render()}
@@ -834,9 +831,9 @@ function delSub(id){if(!confirm('Удалить подписчика?'))return;S
 /* ---- рассылка ---- */
 A.push=()=>{const n=pubNews()[0];return `<div class="grid g2" style="align-items:start"><div class="card"><h3>Ежедневная рассылка</h3>
   <p class="muted small">Каждый день подписчик получает одно уведомление в выбранное им время — самую свежую опубликованную новость.</p>
-  <p><b>Сегодня уйдёт:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push в браузере/телефоне + СМС для кнопочных телефонов</p>
+  <p><b>Сегодня уйдёт:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push-уведомление на телефон или компьютер, бесплатно</p>
   <button class="btn b-red" onclick="S.stat.push.sent+=totalSubs();save();sendTodayPush();toast('Рассылка отправлена');render()">Отправить сейчас</button></div>
-  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). Для кнопочных телефонов — СМС через оператора. Расписание и учёт открытий — на сервере Amvera.</p></div></div>`};
+  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). СМС не используются. Расписание и учёт открытий — на сервере Amvera.</p></div></div>`};
 
 /* ============ РОУТЕР ============ */
 function render(){
