@@ -6,7 +6,6 @@
 <title>Предупреждён — Новороссийск</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --bg:#f5f3ee; --card:#ffffff; --ink:#14202e; --muted:#5a6676; --line:#e2ddd3;
@@ -315,6 +314,7 @@ if(!S.helpSteps)S.helpSteps=[['Положите трубку','Не спорьт
 if(!S.alert)S.alert='⚠ Сотрудники полиции, банков и Госуслуг никогда не просят перевести деньги или назвать код из СМС.';
 S.smiUsers.forEach(u=>{if(!u.login){if(u.id==='u1'){u.login='ivanova';u.pass='nvr2026'}else{u.login='smi'+u.id;u.pass='nvr2026'}}});
 if(!S.smiUsers.some(u=>u.login==='petrov'))S.smiUsers.push({id:'u2',fio:'Петров Алексей Игоревич',media:'«Новороссийск 24»',pos:'Редактор',phone:'+7 918 000-00-02',login:'petrov',pass:'nvr2026',status:'ok',date:dAgo(12)});
+S.smiUsers=S.smiUsers.filter(u=>u.status!=='wait');
 save();
 const sec=id=>S.sections.find(x=>x.id===id);
 function buildNav(){
@@ -569,12 +569,11 @@ function logout(){S.me=null;save();render()}
 function unsub(){if(!confirm('Отписаться от ежедневных предупреждений?'))return;S.subs=S.subs.filter(s=>s.id!==S.me.id);S.me=null;save();toast('Вы отписаны');render()}
 
 /* ---------- ПОРТАЛ СМИ ---------- */
-const regUrl=()=>location.origin+location.pathname.replace(/[^/]*$/,'')+'index.html#smi-register';
 R.smi=()=>{
   if(!S.smiMe) return R.admin();
   const u=S.smiMe;
   const mine=[...S.news.map(x=>({...x,k:'Новость'})),...S.memos.map(x=>({...x,k:'Памятка'})),...S.schemes.filter(x=>x.author).map(x=>({...x,k:'Схема'}))].filter(x=>x.authorId===u.id);
-  return `<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:0">Панель управления</h1><p class="muted small" style="margin-top:4px">${esc(u.fio)} · ${esc(u.media)} · автор</p></div><button class="btn b-ghost" onclick="S.smiMe=null;save();render()">Выйти</button></div>
+  return `<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:0">Панель управления</h1><p class="muted small" style="margin-top:4px">${esc(u.fio)} · ${esc(u.media)} · сотрудник</p></div><button class="btn b-ghost" onclick="S.smiMe=null;save();render()">Выйти</button></div>
   <div class="grid g2" style="align-items:start;margin-top:10px">
   <div class="card">
     <h3>Новый материал</h3>
@@ -587,7 +586,7 @@ R.smi=()=>{
     <div id="fimg"><label for="mimg">Фото (необязательно)</label><input id="mimg" type="file" accept="image/*"></div>
     <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg"> Срочно — отправить push всем подписчикам</label>
     <button class="btn big b-red" style="width:100%;margin-top:16px" onclick="smiSubmit()">Отправить на проверку</button>
-    <p class="small muted">Материал появится на сайте после проверки пресс-службой УМВД.</p>
+    <p class="small muted">Материал появится на сайте сразу или после проверки администратором — как настроено для вашей учётной записи.</p>
   </div>
   <div><div class="card"><h3>Мои материалы</h3>
     ${mine.length?`<table><tr><th>Материал</th><th>Статус</th><th>Просмотры</th></tr>${mine.map(x=>`<tr><td><span class="tag">${x.k}</span><br>${esc(x.title)}</td><td>${x.status==='pub'?'<span class="tag green">Опубликовано</span>':'<span class="tag amber">На проверке</span>'}</td><td>${x.views||0}</td></tr>`).join('')}</table>`:'<p class="muted">Вы ещё ничего не публиковали.</p>'}
@@ -615,40 +614,19 @@ function smiSubmit(){
   const f=$('#mimg').files[0];
   if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
 }
-R['smi-register']=()=>`<div style="max-width:620px"><a href="#admin">← Вход в панель</a><h1>Анкета сотрудника СМИ</h1><p class="lead">После проверки пресс-служба УМВД откроет вам доступ к публикациям.</p>
-  <div class="card">
-    <label for="rf">ФИО</label><input id="rf" placeholder="Фамилия Имя Отчество" autocomplete="name">
-    <label for="rb">Дата рождения</label><input id="rb" type="date">
-    <label for="rm">Издание / редакция</label><input id="rm" placeholder="Например, «Новороссийский рабочий»">
-    <label for="rpos">Должность</label><input id="rpos" placeholder="Корреспондент, редактор…">
-    <label for="rc">Номер редакционного удостоверения</label><input id="rc">
-    <label for="rp">Телефон</label><input id="rp" type="tel" inputmode="tel" placeholder="+7 900 000-00-00">
-    <label for="re">Электронная почта</label><input id="re" type="email">
-    <label class="switch" style="margin-top:16px;font-weight:400"><input type="checkbox" id="ragree"> Согласен(на) на обработку персональных данных</label>
-    <button class="btn big b-navy" style="width:100%;margin-top:16px" onclick="smiRegister()">Отправить анкету</button>
-  </div></div>`;
-function smiRegister(){
-  const v=id=>$('#'+id).value.trim();
-  if(!v('rf')||!v('rb')||!v('rm')||v('rp').replace(/\D/g,'').length<10){toast('Заполните ФИО, дату рождения, издание и телефон');return}
-  if(!$('#ragree').checked){toast('Нужно согласие на обработку данных');return}
-  S.smiUsers.push({id:uid(),fio:v('rf'),birth:v('rb'),media:v('rm'),pos:v('rpos'),cert:v('rc'),phone:v('rp'),email:v('re'),status:'wait',date:today()});
-  save();openModal('<h2>Анкета отправлена</h2><p>Пресс-служба УМВД проверит данные и пришлёт логин и пароль на ваш телефон.</p><button class="btn b-navy" onclick="closeModal();location.hash=\'admin\'">Понятно</button>');
-}
-
 /* ---------- ПАНЕЛЬ МВД ---------- */
 let atab='stat', editRef=null, matFilter='all', subQ='';
 const ADMIN_LOGIN='admin', ADMIN_AUTHOR='УМВД по г. Новороссийску';
 const TILEBG={schemes:'#eef2f7',help:'var(--red-soft)',share:'var(--green-soft)',memos:'var(--amber-soft)',news:'#eef2f7'};
 R.admin=()=>{
   if(!S.isAdmin&&S.smiMe) return R.smi();
-  if(!S.isAdmin) return `<div class="grid g2" style="align-items:start">
-    <div><h1>Панель управления</h1><p class="lead">Для пресс-службы УМВД и журналистов. Права зависят от учётной записи: администратор видит всё, автор — добавляет материалы.</p>
-    <div class="card"><label for="al">Логин</label><input id="al" value="${ADMIN_LOGIN}" autocomplete="username"><label for="ap">Пароль</label><input id="ap" type="password" value="${ADMIN_PASS}" autocomplete="current-password">
-    <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="staffLogin()">Войти</button>
-    <div class="demo" style="margin-top:12px">Тестовые входы:<br>администратор УМВД — <a href="javascript:void 0" onclick="$('#al').value='${ADMIN_LOGIN}';$('#ap').value='${ADMIN_PASS}'"><b>${ADMIN_LOGIN}</b> / <b>${ADMIN_PASS}</b></a><br>журналист — <a href="javascript:void 0" onclick="$('#al').value='ivanova';$('#ap').value='nvr2026'"><b>ivanova</b> / <b>nvr2026</b></a></div></div></div>
-    <div class="card" style="text-align:center"><h3>Журналист, ещё нет доступа?</h3><p class="muted small">Отсканируйте QR — откроется анкета: ФИО, дата рождения, издание. После одобрения пресс-служба выдаст логин и пароль.</p><div class="qr" id="qrbox"></div><p><a href="#smi-register">Заполнить анкету →</a></p></div></div>`;
+  if(!S.isAdmin) return `<div style="max-width:440px;margin:30px auto 0"><h1 style="text-align:center">Вход в панель</h1>
+    <p class="muted" style="text-align:center;margin-top:0">Только для сотрудников. Учётные записи выдаёт администратор.</p>
+    <div class="card"><label for="al">Логин</label><input id="al" autocomplete="username">
+    <label for="ap">Пароль</label><input id="ap" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')staffLogin()">
+    <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="staffLogin()">Войти</button></div></div>`;
   const modN=[...S.news,...S.memos,...S.schemes].filter(x=>x.status==='mod').length;
-  const waitU=S.smiUsers.filter(u=>u.status==='wait').length;
+  const waitU=0;
   const T=[['stat','📊','Статистика и отчёты'],['mat','📰','Новости и материалы'],['mod','✅','Проверка',modN],['acc','👥','Учётные записи',waitU],['sec','🧩','Разделы сайта'],['subs','📱','Подписчики'],['push','🔔','Рассылка']];
   return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1 style="margin:0">Панель управления</h1><p class="muted small" style="margin:2px 0 0">Пресс-служба УМВД России по г. Новороссийску · администратор</p></div><button class="btn b-ghost" onclick="S.isAdmin=false;save();render()">Выйти</button></div>
   <div class="adm"><nav class="aside">${T.map(([k,i,v,n])=>`<button class="${atab===k?'on':''}" onclick="atab='${k}';editRef=null;render()"><span>${i}</span>${v}${n?`<em>${n}</em>`:''}</button>`).join('')}</nav><section>${A[atab]()}</section></div>`;
@@ -658,8 +636,8 @@ function staffLogin(){
   if(l===ADMIN_LOGIN&&pw===ADMIN_PASS){S.isAdmin=true;S.smiMe=null;save();render();return}
   const u=S.smiUsers.find(x=>x.login===l);
   if(!u||u.pass!==pw){toast('Неверный логин или пароль');return}
-  if(u.status==='blocked'){toast('Доступ закрыт. Обратитесь в пресс-службу УМВД');return}
-  if(u.status!=='ok'){toast('Анкета ещё на проверке');return}
+  if(u.status==='blocked'){toast('Доступ закрыт. Обратитесь к администратору');return}
+  if(u.status!=='ok'){toast('Неверный логин или пароль');return}
   S.smiMe=u;S.isAdmin=false;save();render();
 }
 const adminLogin=staffLogin;
@@ -805,19 +783,16 @@ function credsModal(u,title){
   $('#cpy').onclick=()=>{copy(txt);toast('Скопировано')};
 }
 A.acc=()=>{
-  const wait=S.smiUsers.filter(u=>u.status==='wait');
-  return `${wait.length?`<div class="card" style="margin-bottom:16px;border:2px solid var(--amber)"><h3>📥 Новые анкеты по QR (${wait.length})</h3>${wait.map(u=>`<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding:10px 0"><div><b>${esc(u.fio)}</b> · ${esc(u.media)}<br><span class="small muted">д.р. ${new Date(u.birth).toLocaleDateString('ru-RU')} · ${esc(u.phone)} · удост. ${esc(u.cert||'—')}</span></div><div class="row"><button class="btn b-navy" onclick="approveU('${u.id}')">Одобрить и выдать пароль</button><button class="btn b-ghost" onclick="delU('${u.id}')">Отклонить</button></div></div>`).join('')}</div>`:''}
-  <div class="grid g2" style="align-items:start">
-  <div class="card"><h3>➕ Создать учётную запись автора</h3><p class="small muted" style="margin:0">Для сотрудников СМИ и пресс-службы, которые будут добавлять новости.</p>
+  return `
+  <div class="card" style="max-width:640px"><h3>➕ Создать учётную запись</h3><p class="small muted" style="margin:0">Только тот, кому вы выдали логин и пароль, сможет войти в панель и добавлять новости.</p>
     <label for="nf">ФИО</label><input id="nf" placeholder="Фамилия Имя Отчество" oninput="if(!$('#nl').dataset.t)$('#nl').value=genLogin(this.value)">
     <label for="nm">Издание / отдел</label><input id="nm" placeholder="«Новороссийск 24»">
     <label for="npos">Должность</label><input id="npos" placeholder="Редактор">
     <label for="nph">Телефон</label><input id="nph" type="tel" placeholder="+7 900 000-00-00">
     <div class="grid g2"><div><label for="nl">Логин</label><input id="nl" oninput="this.dataset.t=1"></div><div><label for="npw">Пароль</label><div class="row" style="flex-wrap:nowrap"><input id="npw" value="${genPass()}"><button class="btn b-ghost" style="padding:0 12px" title="Новый пароль" onclick="$('#npw').value=genPass()">🎲</button></div></div></div>
-    <label class="switch" style="margin-top:12px;font-weight:400"><input type="checkbox" id="nmod" checked> Материалы проходят проверку перед публикацией</label>
+    <label class="switch" style="margin-top:12px;font-weight:400"><input type="checkbox" id="nmod"> Материалы проходят проверку администратора перед публикацией</label>
     <button class="btn b-red" style="width:100%;margin-top:14px" onclick="createU()">Создать учётную запись</button>
   </div>
-  <div class="card" style="text-align:center"><h3>QR для редакций</h3><p class="small muted">Сотрудник сканирует QR и сам заполняет анкету: ФИО, дата рождения, издание. Анкета придёт сюда на одобрение.</p><div class="qr" id="qrbox"></div><br><button class="btn b-ghost" style="margin-top:12px" onclick="window.print()">🖨 Распечатать</button></div>
   </div>
   <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Все учётные записи (${S.smiUsers.filter(u=>u.status!=='wait').length})</h3><button class="btn b-ghost" onclick="exportAccounts()">⬇ Скачать список</button></div>
   <table style="margin-top:10px"><tr><th>ФИО / издание</th><th>Логин</th><th>Статус</th><th>Материалов</th><th>Действия</th></tr>${S.smiUsers.filter(u=>u.status!=='wait').map(u=>`<tr><td><b>${esc(u.fio)}</b><br><span class="small muted">${esc(u.media)}${u.pos?' · '+esc(u.pos):''}<br>${esc(u.phone||'')}</span></td><td><code>${esc(u.login)}</code></td><td>${u.status==='ok'?'<span class="tag green">Активен</span>':'<span class="tag red">Заблокирован</span>'}${u.noMod?'<br><span class="small muted">без проверки</span>':''}</td><td>${allMat().filter(x=>x.authorId===u.id).length}</td>
@@ -879,7 +854,7 @@ function render(){
   else if(r==='scheme'&&id){html=R.schemes();setTimeout(()=>openScheme(id),0)}
   else html=(sec(r)&&!sec(r).on?R.home:(R[r]||R.home))();
   buildNav();
-  const staff={admin:'Панель управления',smi:'Панель управления','smi-register':'Панель управления'}[r];
+  const staff={admin:'Панель управления',smi:'Панель управления'}[r];
   document.body.classList.toggle('staff',!!staff);$('#stafftag').textContent=staff||'';
   $('#app').innerHTML=html;
   document.querySelectorAll('#app table').forEach(t=>{if(!t.parentElement.classList.contains('tw')){const w=document.createElement('div');w.className='tw';t.before(w);w.appendChild(t)}});
@@ -888,7 +863,6 @@ function render(){
   after(r);
 }
 function after(r){
-  const qb=$('#qrbox'); if(qb&&window.QRCode){qb.innerHTML='';new QRCode(qb,{text:regUrl(),width:200,height:200,colorDark:'#0e2a47'})}
   if(r==='news'&&$('#nchips')) $('#nchips').onclick=e=>{const c=e.target.dataset.c;if(c===undefined)return;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));$('#nlist').innerHTML=pubNews().filter(n=>!c||n.cat===c).map(newsItem).join('')||'<p class="muted">Нет новостей в этой категории.</p>'};
   if(r==='schemes'){let cat='';const draw=()=>{const q=$('#sq').value.toLowerCase();$('#slist').innerHTML=S.schemes.filter(s=>(!s.status||s.status==='pub')&&(!cat||s.cat===cat)&&(!q||(s.title+s.sign+s.todo+CATS[s.cat]).toLowerCase().includes(q))).map(schemeCard).join('')||'<p class="muted">Ничего не найдено.</p>'};
     $('#schips').onclick=e=>{if(e.target.dataset.c===undefined)return;cat=e.target.dataset.c;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));draw()};$('#sq').oninput=draw;draw()}
