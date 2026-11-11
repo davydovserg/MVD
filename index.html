@@ -477,7 +477,7 @@ function articleView(kind,id){
 function saveFav(id){S.me.fav=S.me.fav||[];if(!S.me.fav.includes(id))S.me.fav.push(id);save();toast('Сохранено в личном кабинете')}
 
 /* ---------- ЛИЧНЫЙ КАБИНЕТ ---------- */
-let pendingCode=null,pendingPhone='',pendingFio='',pendingBirth='',regMode=true;
+let pendingCode=null,pendingPhone='',pendingFio='',pendingBirth='',pendingTime='10:00',regMode=true;
 const normPh=p=>String(p).replace(/\D/g,'').slice(-10);
 const firstName=f=>{const w=String(f||'').split(' ');return w.length>2?w[1]+' '+w[2]:(w[1]||w[0]||'')};
 const ageOf=b=>b?Math.floor((Date.now()-new Date(b))/31557600000):'';
@@ -503,6 +503,7 @@ function authInner(){return `
       <label for="rgb">Дата рождения</label><input id="rgb" type="date" value="${esc(pendingBirth)}" max="${today()}">`:''}
       <label for="ph">Номер телефона</label><input id="ph" type="tel" inputmode="tel" placeholder="+7 900 000-00-00" value="${esc(pendingPhone)}">
       ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgpush"> Получать ежедневное предупреждение на телефон</label>
+      <label for="rgt">Во сколько присылать</label><div class="row" style="flex-wrap:nowrap"><input id="rgt" type="time" value="${esc(pendingTime)}" style="max-width:170px;font-size:1.3rem"><span class="muted small">можно выбрать любое время, потом поменять в кабинете</span></div>
       <label class="switch" style="margin-top:10px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
       <button class="btn b-amber" style="width:100%;margin-top:12px" onclick="demoFill()">Заполнить тестовыми данными</button>`
       :`<div class="demo" style="margin-top:10px">Тестовый вход: <b>+7 900 111-22-33</b> (Иванова Валентина Петровна) <a href="javascript:void 0" onclick="$('#ph').value='+7 900 111-22-33'">вставить</a></div>`}
@@ -532,7 +533,7 @@ R.cabinet=()=>{
       <h3>🔔 Ежедневное уведомление</h3>
       <label class="switch"><input type="checkbox" id="cpush" ${m.push?'checked':''}> Присылать предупреждение каждый день</label>
       <label for="ctime">Во сколько присылать</label>
-      <select id="ctime">${['09:00','10:00','12:00','15:00','18:00','20:00'].map(t=>`<option ${m.time===t?'selected':''}>${t}</option>`).join('')}</select>
+      <input id="ctime" type="time" value="${esc(m.time||'10:00')}" style="max-width:170px;font-size:1.3rem">
       <label class="switch" style="margin-top:14px"><input type="checkbox" id="csms" ${m.sms?'checked':''}> Дублировать по СМС (для кнопочного телефона)</label>
       <div class="row" style="margin-top:16px"><button class="btn b-navy" onclick="savePush()">Сохранить</button><button class="btn b-ghost" onclick="sendTodayPush()">Проверить уведомление</button></div>
     </div>
@@ -551,16 +552,16 @@ function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<
     if(!$('#rgok').checked){toast('Нужно согласие на обработку данных');return}
     enablePush();
     if(known){toast('Этот номер уже зарегистрирован — войдите');regMode=false;pendingPhone=p;refreshAuth();return}
-    pendingFio=f;pendingBirth=b;
+    pendingFio=f;pendingBirth=b;pendingTime=$('#rgt').value||'10:00';
   } else if(!known){toast('Номер не найден — зарегистрируйтесь');regMode=true;pendingPhone=p;refreshAuth();return}
   pendingPhone=p;pendingCode=String(Math.floor(1000+Math.random()*9000));$('#st1').classList.add('hide');$('#st2').classList.remove('hide');$('#democode').textContent='Тестовый режим: СМС не отправляется, код '+pendingCode+' уже подставлен — нажмите «Войти».';$('#cd').value=pendingCode;$('#cd').focus()}
 function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;$('#rgpush').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
 function checkCode(){if($('#cd').value.trim()!==pendingCode){toast('Неверный код');return}
   let sub=S.subs.find(s=>normPh(s.phone)===normPh(pendingPhone));
-  if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:'10:00',district:'Центральный',fav:[]};S.subs.push(sub)}
+  if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:pendingTime,district:'Центральный',fav:[]};S.subs.push(sub)}
   S.me=sub;save();closeModal();toast('Вы вошли и подписаны на предупреждения');enablePush().then(ok=>{if(ok){S.me.push=true;save()}});render()}
 function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('#cy').value){toast('ФИО и дата рождения обязательны');return}Object.assign(S.me,{name:f,birth:$('#cy').value,district:$('#cdst').value});sync();toast('Данные сохранены');render()}
-async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value;S.me.sms=$('#csms').checked;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
+async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value||S.me.time;S.me.sms=$('#csms').checked;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
 function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
 function logout(){S.me=null;save();render()}
 function unsub(){if(!confirm('Выключить ежедневные предупреждения? Включить снова можно здесь же.'))return;S.me.push=false;S.me.sms=false;sync();toast('Рассылка выключена');render()}
