@@ -6,12 +6,12 @@
 <meta name="supported-color-schemes" content="light">
 <meta name="darkreader-lock">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Предупреждён — Новороссийск</title>
+<title>МВД предупреждает — Новороссийск против мошенников</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#3364a6">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-48.png">
-<meta name="apple-mobile-web-app-title" content="Предупреждён">
+<meta name="apple-mobile-web-app-title" content="МВД предупреждает">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -214,6 +214,9 @@ body.staff main{padding-bottom:40px}
 .memo{background:#fff8e1}
 .tile{border-color:rgba(255,255,255,.4)}.tile:hover{border-color:#fff}
 .ni{border-color:rgba(255,255,255,.3)}.ni:hover{border-color:#fff}
+.brand{min-width:0}.brand span{min-width:0}
+@media(max-width:420px){.brand{gap:8px}.brand b{font-size:.9rem;white-space:nowrap}.brand img{width:44px!important}.brand small{font-size:.64rem}.top .wrap{gap:8px}}
+@media(max-width:340px){.brand b{font-size:.8rem}}
 .switch{display:flex;align-items:center;gap:12px;font-weight:600}
 .switch input{width:28px;height:28px;min-height:0}
 </style>
@@ -228,7 +231,7 @@ body.staff main{padding-bottom:40px}
 <header class="top"><div class="wrap">
   <a class="brand" href="#home">
     <img src="icons/emblem.png" alt="Эмблема МВД России" width="72" height="42" style="width:72px;height:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))">
-    <span><b>Предупреждён</b><small>Новороссийск против мошенников</small></span>
+    <span><b>МВД предупреждает</b><small>Новороссийск против мошенников</small></span>
   </a>
   <nav class="nav" id="nav"></nav>
   <span class="stafftag" id="stafftag"></span>
@@ -240,7 +243,7 @@ body.staff main{padding-bottom:40px}
 
 <footer><div class="wrap grid">
   <div>
-    <b style="color:#fff;font-size:1rem">Предупреждён — Новороссийск</b>
+    <b style="color:#fff;font-size:1rem">МВД предупреждает — Новороссийск против мошенников</b>
     <p>Информационный проект Управления МВД России по городу Новороссийску. Новости и предупреждения о мошенниках готовят городские СМИ.</p>
     <p>353912, Краснодарский край, г. Новороссийск, Анапское шоссе, д. 57 «А»</p>
   </div>
@@ -408,7 +411,7 @@ async function enablePush(){
 function sendTodayPush(){
   const n=pubNews()[0]; if(!n)return;
   if('Notification' in window && Notification.permission==='granted'){
-    const nt=new Notification('⚠ Предупреждён: новость дня',{body:n.title,tag:'daily'});
+    const nt=new Notification('⚠ МВД предупреждает',{body:n.title,tag:'daily'});
     nt.onclick=()=>{window.focus();location.hash='news/'+n.id};
   } else toast('Уведомление: '+n.title);
 }
@@ -684,7 +687,7 @@ function csv(rows){return '﻿'+rows.map(r=>r.map(c=>{c=String(c??'');return /[;
 function download(name,text){const b=new Blob([text],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);toast('Файл скачан: '+name)}
 function exportReport(){
   const d=statData();
-  const rows=[['Отчёт: Предупреждён — Новороссийск'],['Сформирован',new Date().toLocaleString('ru-RU')],[],
+  const rows=[['Отчёт: МВД предупреждает — Новороссийск против мошенников'],['Сформирован',new Date().toLocaleString('ru-RU')],[],
     ['ОСНОВНЫЕ ПОКАЗАТЕЛИ','Значение'],['Подписчиков всего',d.subs],['Новых за сегодня',d.today],['Отправлено push-уведомлений',d.sent],['Открывают push, %',d.open],['Просмотров новостей',d.views],['Переслали близким, раз',d.shares],
     ['Опубликовано новостей',d.counts.news],['Памяток',d.counts.memo],['Схем в архиве',d.counts.scheme],[],
     ['НОВЫЕ ПОДПИСЧИКИ ЗА НЕДЕЛЮ','Человек'],...Object.entries(d.week),[],
@@ -707,7 +710,7 @@ function printReport(){
   const d=statData();const tb=(h,o,s='')=>`<h3>${h}</h3><table>${Object.entries(o).map(([k,v])=>`<tr><td>${k}</td><td>${(+v).toLocaleString('ru-RU')}${s}</td></tr>`).join('')}</table>`;
   const w=window.open('','_blank');if(!w){toast('Разрешите всплывающие окна');return}
   w.document.write(`<!doctype html><meta charset="utf-8"><title>Отчёт ${today()}</title><style>body{font:14px/1.45 Arial,sans-serif;color:#14202e;max-width:800px;margin:30px auto;padding:0 20px}h1{font-size:22px;margin:0}h3{margin:22px 0 6px;font-size:15px;color:#0e2a47}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #ddd;padding:6px 4px;text-align:left}td:last-child{text-align:right}.k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.k div{border:1px solid #ddd;border-radius:8px;padding:10px}.k b{display:block;font-size:22px}</style>
-  <h1>Отчёт: Предупреждён — Новороссийск</h1><p>Пресс-служба УМВД России по г. Новороссийску · сформирован ${new Date().toLocaleString('ru-RU')}</p>
+  <h1>Отчёт: МВД предупреждает — Новороссийск против мошенников</h1><p>Пресс-служба УМВД России по г. Новороссийску · сформирован ${new Date().toLocaleString('ru-RU')}</p>
   <div class="k"><div>Подписчиков<b>${d.subs.toLocaleString('ru-RU')}</b></div><div>Открывают push<b>${d.open}%</b></div><div>Переслали близким<b>${d.shares.toLocaleString('ru-RU')}</b></div><div>Просмотров новостей<b>${d.views.toLocaleString('ru-RU')}</b></div><div>Новостей<b>${d.counts.news}</b></div><div>Памяток<b>${d.counts.memo}</b></div></div>
   ${tb('Новые подписчики за неделю',d.week)}${tb('По районам',d.dist)}${tb('Возраст подписчиков',d.ages,'%')}${tb('Куда пересылают',d.ch)}
   <h3>Новости</h3><table><tr><th>Новость</th><th>Автор</th><th>Просмотры</th></tr>${d.news.map(n=>`<tr><td>${esc(n.title)}</td><td>${esc(n.author)}</td><td>${(n.views||0).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>`);
@@ -793,7 +796,7 @@ function genPass(){const a='abcdefghjkmnpqrstuvwxyz23456789';let p='';for(let i=
 function translit(s){const m={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};return String(s).toLowerCase().split('').map(c=>m[c]??(/[a-z0-9]/.test(c)?c:'')).join('')}
 function genLogin(fio){let b=translit(String(fio||'').split(' ')[0])||'smi',l=b,i=2;while(S.smiUsers.some(u=>u.login===l)){l=b+i++}return l}
 function credsModal(u,title){
-  const txt=`Доступ к сайту «Предупреждён — Новороссийск»\nАдрес: ${location.origin+location.pathname.replace(/[^/]*$/,'')}admin.html\nЛогин: ${u.login}\nПароль: ${u.pass}`;
+  const txt=`Доступ к сайту «МВД предупреждает — Новороссийск против мошенников»\nАдрес: ${location.origin+location.pathname.replace(/[^/]*$/,'')}admin.html\nЛогин: ${u.login}\nПароль: ${u.pass}`;
   openModal(`<h2>${title}</h2><p>Передайте сотруднику эти данные. Пароль можно сменить в любой момент.</p>
   <div class="card" style="font-size:1.05rem"><b>${esc(u.fio)}</b> · ${esc(u.media)}<br>Логин: <b>${esc(u.login)}</b><br>Пароль: <b>${esc(u.pass)}</b></div>
   <div class="row" style="margin-top:14px"><button class="btn b-navy" id="cpy">📋 Скопировать</button>${u.phone?`<a class="btn b-ghost" href="sms:${u.phone.replace(/[^\d+]/g,'')}?&body=${encodeURIComponent(txt)}">✉ Отправить СМС</a>`:''}</div>`);
