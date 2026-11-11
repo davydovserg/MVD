@@ -226,8 +226,7 @@ body.staff main{padding-bottom:40px}
     <a href="tel:+78617605520">8 (8617) 60-55-20</a>
   </div>
   <div>
-    <b style="color:#fff">Для партнёров</b><br>
-    <a href="#smi">Вход для СМИ</a><br>
+    <b style="color:#fff">Управление</b><br>
     <span>Секретариат: 8 (8617) 60-55-51</span>
   </div>
 </div></footer>
@@ -570,25 +569,12 @@ function logout(){S.me=null;save();render()}
 function unsub(){if(!confirm('Отписаться от ежедневных предупреждений?'))return;S.subs=S.subs.filter(s=>s.id!==S.me.id);S.me=null;save();toast('Вы отписаны');render()}
 
 /* ---------- ПОРТАЛ СМИ ---------- */
-const regUrl=()=>location.origin+location.pathname+'#smi-register';
+const regUrl=()=>location.origin+location.pathname.replace(/[^/]*$/,'')+'index.html#smi-register';
 R.smi=()=>{
-  if(!S.smiMe) return `<div class="grid g2" style="align-items:start">
-    <div><h1>Кабинет СМИ</h1><p class="lead">Для редакций Новороссийска: публикуйте новости о мошенниках, схемы обмана и памятки для жителей.</p>
-      <div class="card"><h3>Вход</h3>
-        <label for="sph">Логин</label><input id="sph" autocomplete="username" value="ivanova">
-        <label for="sp">Пароль</label><input id="sp" type="password" autocomplete="current-password" value="nvr2026">
-        <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="smiLogin()">Войти</button>
-        <p class="demo" style="margin-top:12px">Логин и пароль выдаёт пресс-служба УМВД. Тестовый вход уже подставлен: <b>ivanova</b> / <b>nvr2026</b></p>
-      </div></div>
-    <div class="card" style="text-align:center">
-      <h3>Впервые? Отсканируйте QR</h3>
-      <p class="muted small">Наведите камеру телефона — откроется анкета сотрудника СМИ: ФИО, дата рождения, издание, удостоверение.</p>
-      <div class="qr" id="qrbox"></div>
-      <p><a href="#smi-register">Или заполните анкету здесь →</a></p>
-    </div></div>`;
+  if(!S.smiMe) return R.admin();
   const u=S.smiMe;
   const mine=[...S.news.map(x=>({...x,k:'Новость'})),...S.memos.map(x=>({...x,k:'Памятка'})),...S.schemes.filter(x=>x.author).map(x=>({...x,k:'Схема'}))].filter(x=>x.authorId===u.id);
-  return `<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:0">Кабинет СМИ</h1><p class="muted" style="margin-top:4px">${esc(u.fio)} · ${esc(u.media)}</p></div><button class="btn b-ghost" onclick="S.smiMe=null;save();render()">Выйти</button></div>
+  return `<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:0">Панель управления</h1><p class="muted small" style="margin-top:4px">${esc(u.fio)} · ${esc(u.media)} · автор</p></div><button class="btn b-ghost" onclick="S.smiMe=null;save();render()">Выйти</button></div>
   <div class="grid g2" style="align-items:start;margin-top:10px">
   <div class="card">
     <h3>Новый материал</h3>
@@ -629,7 +615,7 @@ function smiSubmit(){
   const f=$('#mimg').files[0];
   if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
 }
-R['smi-register']=()=>`<div style="max-width:620px"><a href="#smi">← Кабинет СМИ</a><h1>Анкета сотрудника СМИ</h1><p class="lead">После проверки пресс-служба УМВД откроет вам доступ к публикациям.</p>
+R['smi-register']=()=>`<div style="max-width:620px"><a href="#admin">← Вход в панель</a><h1>Анкета сотрудника СМИ</h1><p class="lead">После проверки пресс-служба УМВД откроет вам доступ к публикациям.</p>
   <div class="card">
     <label for="rf">ФИО</label><input id="rf" placeholder="Фамилия Имя Отчество" autocomplete="name">
     <label for="rb">Дата рождения</label><input id="rb" type="date">
@@ -646,7 +632,7 @@ function smiRegister(){
   if(!v('rf')||!v('rb')||!v('rm')||v('rp').replace(/\D/g,'').length<10){toast('Заполните ФИО, дату рождения, издание и телефон');return}
   if(!$('#ragree').checked){toast('Нужно согласие на обработку данных');return}
   S.smiUsers.push({id:uid(),fio:v('rf'),birth:v('rb'),media:v('rm'),pos:v('rpos'),cert:v('rc'),phone:v('rp'),email:v('re'),status:'wait',date:today()});
-  save();openModal('<h2>Анкета отправлена</h2><p>Пресс-служба УМВД проверит данные и пришлёт логин и пароль на ваш телефон.</p><button class="btn b-navy" onclick="closeModal();location.hash=\'smi\'">Понятно</button>');
+  save();openModal('<h2>Анкета отправлена</h2><p>Пресс-служба УМВД проверит данные и пришлёт логин и пароль на ваш телефон.</p><button class="btn b-navy" onclick="closeModal();location.hash=\'admin\'">Понятно</button>');
 }
 
 /* ---------- ПАНЕЛЬ МВД ---------- */
@@ -654,17 +640,29 @@ let atab='stat', editRef=null, matFilter='all', subQ='';
 const ADMIN_LOGIN='admin', ADMIN_AUTHOR='УМВД по г. Новороссийску';
 const TILEBG={schemes:'#eef2f7',help:'var(--red-soft)',share:'var(--green-soft)',memos:'var(--amber-soft)',news:'#eef2f7'};
 R.admin=()=>{
-  if(!S.isAdmin) return `<div style="max-width:480px"><h1>Панель управления</h1><p class="lead">Пресс-служба УМВД России по г. Новороссийску</p>
+  if(!S.isAdmin&&S.smiMe) return R.smi();
+  if(!S.isAdmin) return `<div class="grid g2" style="align-items:start">
+    <div><h1>Панель управления</h1><p class="lead">Для пресс-службы УМВД и журналистов. Права зависят от учётной записи: администратор видит всё, автор — добавляет материалы.</p>
     <div class="card"><label for="al">Логин</label><input id="al" value="${ADMIN_LOGIN}" autocomplete="username"><label for="ap">Пароль</label><input id="ap" type="password" value="${ADMIN_PASS}" autocomplete="current-password">
-    <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="adminLogin()">Войти</button>
-    <p class="demo" style="margin-top:12px">Тестовый вход уже подставлен: <b>${ADMIN_LOGIN}</b> / <b>${ADMIN_PASS}</b></p></div></div>`;
+    <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="staffLogin()">Войти</button>
+    <div class="demo" style="margin-top:12px">Тестовые входы:<br>администратор УМВД — <a href="javascript:void 0" onclick="$('#al').value='${ADMIN_LOGIN}';$('#ap').value='${ADMIN_PASS}'"><b>${ADMIN_LOGIN}</b> / <b>${ADMIN_PASS}</b></a><br>журналист — <a href="javascript:void 0" onclick="$('#al').value='ivanova';$('#ap').value='nvr2026'"><b>ivanova</b> / <b>nvr2026</b></a></div></div></div>
+    <div class="card" style="text-align:center"><h3>Журналист, ещё нет доступа?</h3><p class="muted small">Отсканируйте QR — откроется анкета: ФИО, дата рождения, издание. После одобрения пресс-служба выдаст логин и пароль.</p><div class="qr" id="qrbox"></div><p><a href="#smi-register">Заполнить анкету →</a></p></div></div>`;
   const modN=[...S.news,...S.memos,...S.schemes].filter(x=>x.status==='mod').length;
   const waitU=S.smiUsers.filter(u=>u.status==='wait').length;
   const T=[['stat','📊','Статистика и отчёты'],['mat','📰','Новости и материалы'],['mod','✅','Проверка',modN],['acc','👥','Учётные записи',waitU],['sec','🧩','Разделы сайта'],['subs','📱','Подписчики'],['push','🔔','Рассылка']];
   return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1 style="margin:0">Панель управления</h1><p class="muted small" style="margin:2px 0 0">Пресс-служба УМВД России по г. Новороссийску · администратор</p></div><button class="btn b-ghost" onclick="S.isAdmin=false;save();render()">Выйти</button></div>
   <div class="adm"><nav class="aside">${T.map(([k,i,v,n])=>`<button class="${atab===k?'on':''}" onclick="atab='${k}';editRef=null;render()"><span>${i}</span>${v}${n?`<em>${n}</em>`:''}</button>`).join('')}</nav><section>${A[atab]()}</section></div>`;
 };
-function adminLogin(){if($('#al').value.trim()===ADMIN_LOGIN&&$('#ap').value===ADMIN_PASS){S.isAdmin=true;save();render()}else toast('Неверный логин или пароль')}
+function staffLogin(){
+  const l=$('#al').value.trim(),pw=$('#ap').value;
+  if(l===ADMIN_LOGIN&&pw===ADMIN_PASS){S.isAdmin=true;S.smiMe=null;save();render();return}
+  const u=S.smiUsers.find(x=>x.login===l);
+  if(!u||u.pass!==pw){toast('Неверный логин или пароль');return}
+  if(u.status==='blocked'){toast('Доступ закрыт. Обратитесь в пресс-службу УМВД');return}
+  if(u.status!=='ok'){toast('Анкета ещё на проверке');return}
+  S.smiMe=u;S.isAdmin=false;save();render();
+}
+const adminLogin=staffLogin;
 const A={};
 function bars(obj,suffix=''){const max=Math.max(1,...Object.values(obj));return `<div class="bars">${Object.entries(obj).map(([k,v])=>`<div class="bar"><span>${k}</span><span class="t"><i style="width:${Math.max(3,v/max*100)}%"></i></span><b>${v.toLocaleString('ru-RU')}${suffix}</b></div>`).join('')}</div>`}
 const isPub=x=>!x.status||x.status==='pub';
@@ -800,7 +798,7 @@ function genPass(){const a='abcdefghjkmnpqrstuvwxyz23456789';let p='';for(let i=
 function translit(s){const m={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};return String(s).toLowerCase().split('').map(c=>m[c]??(/[a-z0-9]/.test(c)?c:'')).join('')}
 function genLogin(fio){let b=translit(String(fio||'').split(' ')[0])||'smi',l=b,i=2;while(S.smiUsers.some(u=>u.login===l)){l=b+i++}return l}
 function credsModal(u,title){
-  const txt=`Доступ к сайту «Предупреждён — Новороссийск»\nАдрес: ${location.origin+location.pathname}#smi\nЛогин: ${u.login}\nПароль: ${u.pass}`;
+  const txt=`Доступ к сайту «Предупреждён — Новороссийск»\nАдрес: ${location.origin+location.pathname.replace(/[^/]*$/,'')}admin.html\nЛогин: ${u.login}\nПароль: ${u.pass}`;
   openModal(`<h2>${title}</h2><p>Передайте сотруднику эти данные. Пароль можно сменить в любой момент.</p>
   <div class="card" style="font-size:1.05rem"><b>${esc(u.fio)}</b> · ${esc(u.media)}<br>Логин: <b>${esc(u.login)}</b><br>Пароль: <b>${esc(u.pass)}</b></div>
   <div class="row" style="margin-top:14px"><button class="btn b-navy" id="cpy">📋 Скопировать</button>${u.phone?`<a class="btn b-ghost" href="sms:${u.phone.replace(/[^\d+]/g,'')}?&body=${encodeURIComponent(txt)}">✉ Отправить СМС</a>`:''}</div>`);
@@ -881,7 +879,7 @@ function render(){
   else if(r==='scheme'&&id){html=R.schemes();setTimeout(()=>openScheme(id),0)}
   else html=(sec(r)&&!sec(r).on?R.home:(R[r]||R.home))();
   buildNav();
-  const staff={admin:'Панель управления УМВД',smi:'Кабинет СМИ','smi-register':'Кабинет СМИ'}[r];
+  const staff={admin:'Панель управления',smi:'Панель управления','smi-register':'Панель управления'}[r];
   document.body.classList.toggle('staff',!!staff);$('#stafftag').textContent=staff||'';
   $('#app').innerHTML=html;
   document.querySelectorAll('#app table').forEach(t=>{if(!t.parentElement.classList.contains('tw')){const w=document.createElement('div');w.className='tw';t.before(w);w.appendChild(t)}});
