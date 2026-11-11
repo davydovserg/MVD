@@ -303,7 +303,7 @@ function seed(){
     ],
     memos:[
       {id:'m1',title:'5 правил, которые спасут ваши деньги',author:'УМВД по г. Новороссийску',status:'pub',date:dAgo(3),text:'1. Код из СМС — только для вас.\n2. Банк не звонит с просьбой перевести деньги.\n3. Полиция не ведёт дела по телефону.\n4. Родственник в беде — перезвоните ему сами.\n5. Сомневаетесь — звоните 102.'},
-      {id:'m2',title:'Памятка для внуков: как защитить бабушку',author:'«Новороссийск 24»',status:'pub',date:dAgo(6),text:'1. Поставьте определитель номера на телефон.\n2. Договоритесь о кодовом слове на случай «беды».\n3. Запишите в телефон номер 102 и номер банка.\n4. Подпишите бабушку на ежедневные предупреждения на этом сайте.\n5. Звоните ей чаще — мошенники пользуются одиночеством.'},
+      {id:'m2',title:'Памятка для внуков: как защитить бабушку',author:'«Новороссийск 24»',status:'pub',date:dAgo(6),text:'1. Поставьте определитель номера на телефон.\n2. Договоритесь о кодовом слове на случай «беды».\n3. Запишите в телефон номер 102 и номер банка.\n4. Подпишите бабушку на предупреждения на этом сайте.\n5. Звоните ей чаще — мошенники пользуются одиночеством.'},
       {id:'m3',title:'Что делать, если вы уже перевели деньги',author:'УМВД по г. Новороссийску',status:'pub',date:dAgo(9),text:'1. Сразу позвоните в банк и заблокируйте карту.\n2. Попросите банк отозвать перевод.\n3. Позвоните 102 или придите в отдел полиции с паспортом.\n4. Сохраните номер, с которого звонили, и все сообщения.'}
     ],
     smiUsers:[{id:'u1',fio:'Иванова Мария Сергеевна',birth:'1988-04-12',media:'«Новороссийский рабочий»',pos:'Корреспондент',phone:'+7 918 000-00-01',email:'press@example.ru',cert:'ПР-1123',status:'ok',date:dAgo(20)}],
@@ -555,7 +555,7 @@ function quickSub(){const p=$('#hp').value.trim();if(p.replace(/\D/g,'').length<
 const inModal=()=>!!document.querySelector('#mbody #regmodal');
 function regModal(){
   openModal(`<div id="regmodal"><img src="icons/emblem.png" alt="" style="width:110px;height:auto"><h2 style="margin:.2em 0 .3em">${regMode?'Регистрация':'Вход в кабинет'}</h2>
-  <p class="muted" style="margin-top:0">${regMode?'Чтобы пользоваться сайтом, заполните данные. Раз в день на телефон будет приходить короткое предупреждение о новых схемах мошенников.':'Введите номер телефона, с которым регистрировались.'}</p>
+  <p class="muted" style="margin-top:0">${regMode?'Чтобы пользоваться сайтом, заполните данные. Как только появится новое предупреждение о мошенниках, оно сразу придёт вам на телефон.':'Введите номер телефона, с которым регистрировались.'}</p>
   ${authInner()}</div>`);
   $('#modal').classList.add('locked');
 }
@@ -572,8 +572,7 @@ function authInner(){return `
       ${regMode?`<label for="rgf">Фамилия, имя, отчество</label><input id="rgf" autocomplete="name" placeholder="Иванова Валентина Петровна" value="${esc(pendingFio)}">
       <label for="rgb">Дата рождения</label><input id="rgb" type="date" value="${esc(pendingBirth)}" max="${today()}">`:''}
       <label for="ph">Номер телефона</label><input id="ph" type="tel" inputmode="tel" placeholder="+7 900 000-00-00" value="${esc(pendingPhone)}">
-      ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgpush"> Получать ежедневное предупреждение на телефон</label>
-      <label for="rgt">Во сколько присылать</label><div class="row" style="flex-wrap:nowrap"><input id="rgt" type="time" value="${esc(pendingTime)}" style="max-width:170px;font-size:1.3rem"><span class="muted small">можно выбрать любое время, потом поменять в кабинете</span></div>
+      ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgpush"> Получать предупреждения на телефон</label>
       <label class="switch" style="margin-top:10px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
       <button class="btn b-amber" style="width:100%;margin-top:12px" onclick="demoFill()">Заполнить тестовыми данными</button>`
       :`<div class="demo" style="margin-top:10px">Тестовый вход: <b>+7 900 111-22-33</b> (Иванова Валентина Петровна) <a href="javascript:void 0" onclick="$('#ph').value='+7 900 111-22-33'">вставить</a></div>`}
@@ -598,10 +597,8 @@ R.cabinet=()=>{
       <button class="btn b-navy" style="margin-top:16px" onclick="saveMe()">Сохранить</button>
     </div>
     <div class="card">
-      <h3>🔔 Ежедневное уведомление</h3>
-      <label class="switch"><input type="checkbox" id="cpush" ${m.push?'checked':''}> Присылать предупреждение каждый день</label>
-      <label for="ctime">Во сколько присылать</label>
-      <input id="ctime" type="time" value="${esc(m.time||'10:00')}" style="max-width:170px;font-size:1.3rem">
+      <h3>🔔 Уведомления</h3>
+      <label class="switch"><input type="checkbox" id="cpush" ${m.push?'checked':''}> Присылать новые предупреждения сразу</label>
       <div class="row" style="margin-top:16px"><button class="btn b-navy" onclick="savePush()">Сохранить</button><button class="btn b-ghost" onclick="sendTodayPush()">Проверить уведомление</button></div>
     </div>
   </div>
@@ -615,11 +612,11 @@ function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<
     const f=$('#rgf').value.trim().replace(/\s+/g,' '),b=$('#rgb').value;
     if(f.split(' ').length<2){toast('Укажите фамилию и имя полностью');return}
     if(!b){toast('Укажите дату рождения');return}
-    if(!$('#rgpush').checked){toast('Отметьте «Получать ежедневное предупреждение»');return}
+    if(!$('#rgpush').checked){toast('Отметьте «Получать предупреждения на телефон»');return}
     if(!$('#rgok').checked){toast('Нужно согласие на обработку данных');return}
-    enablePush().then(ok=>{if(ok){syncSub();setTimeout(()=>showLocalNotice('⚠ МВД предупреждает','Вы подписаны! Каждый день в '+(pendingTime||'10:00')+' здесь будет предупреждение о новых схемах мошенников.','./index.html#home'),800)}});
+    enablePush().then(ok=>{if(ok){syncSub();setTimeout(()=>showLocalNotice('⚠ МВД предупреждает','Вы подписаны! Новые предупреждения о мошенниках будут приходить сюда сразу.','./index.html#home'),800)}});
     if(known){toast('Этот номер уже зарегистрирован — войдите');regMode=false;pendingPhone=p;refreshAuth();return}
-    pendingFio=f;pendingBirth=b;pendingTime=$('#rgt').value||'10:00';
+    pendingFio=f;pendingBirth=b;
   } else if(!known){const nf=()=>{toast('Номер не найден — зарегистрируйтесь');regMode=true;pendingPhone=p;refreshAuth()};if(API.on){api('login',{body:{phone:p}}).then(u=>{S.subs.push({...u,fav:[]});save();pendingPhone=p;finishAuth()}).catch(nf);return}nf();return}
   pendingPhone=p;finishAuth()}
 function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;$('#rgpush').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
@@ -628,10 +625,10 @@ function finishAuth(){
   if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:pendingTime,district:'Центральный',fav:[]};S.subs.push(sub)}
   S.me=sub;save();closeModal();render();syncSub()}
 function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('#cy').value){toast('ФИО и дата рождения обязательны');return}Object.assign(S.me,{name:f,birth:$('#cy').value,district:$('#cdst').value});sync();syncSub();toast('Данные сохранены');render()}
-async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value||S.me.time;sync();syncSub();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
+async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;sync();syncSub();toast(on?'Уведомления включены':'Уведомления выключены')}
 function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
 function logout(){S.me=null;save();render()}
-function unsub(){if(!confirm('Выключить ежедневные предупреждения? Включить снова можно здесь же.'))return;S.me.push=false;sync();syncSub();toast('Рассылка выключена');render()}
+function unsub(){if(!confirm('Выключить уведомления? Включить снова можно здесь же.'))return;S.me.push=false;sync();syncSub();toast('Рассылка выключена');render()}
 
 /* ---------- ПОРТАЛ СМИ ---------- */
 R.smi=()=>{
@@ -744,7 +741,7 @@ function exportReport(){
 }
 function exportSubs(){
   const SUBS=API.on&&S.serverSubs?S.serverSubs:S.subs;download('podpischiki-'+today()+'.csv',csv([['ФИО','Дата рождения','Возраст','Телефон','Район','Уведомление','Дата регистрации'],
-    ...SUBS.map(s=>[s.name,s.birth?new Date(s.birth).toLocaleDateString('ru-RU'):'',ageOf(s.birth),s.phone,s.district,s.push?s.time:'выкл',new Date(s.date).toLocaleDateString('ru-RU')])]));
+    ...SUBS.map(s=>[s.name,s.birth?new Date(s.birth).toLocaleDateString('ru-RU'):'',ageOf(s.birth),s.phone,s.district,s.push?'вкл':'выкл',new Date(s.date).toLocaleDateString('ru-RU')])]));
 }
 function exportAccounts(){
   download('avtory-smi-'+today()+'.csv',csv([['ФИО','Издание','Должность','Телефон','Почта','Логин','Статус','Материалов'],
@@ -795,7 +792,7 @@ A.mat=()=>{
     <div id="ftext"><label for="mtext">Текст</label><textarea id="mtext" placeholder="Что произошло и что делать жителям">${esc(e?.text||'')}</textarea></div>
     <div id="fsch" class="hide"><label for="msign">Как узнать мошенника</label><textarea id="msign" style="min-height:100px">${esc(e?.sign||'')}</textarea><label for="mtodo">Что делать</label><textarea id="mtodo" style="min-height:100px">${esc(e?.todo||'')}</textarea></div>
     <div id="fimg"><label for="mimg">Фото (необязательно)</label><input id="mimg" type="file" accept="image/*"></div>
-    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg" ${e?.urgent?'checked':''}> Срочно — push всем подписчикам</label>
+    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg" ${e?.urgent?'checked':''}> Пометка «Срочно»</label><p class="small muted" style="margin:6px 0 0">Новость сразу придёт уведомлением всем подписчикам.</p>
     <div class="row" style="margin-top:16px"><button class="btn b-red" onclick="adminSave()">${e?'Сохранить изменения':'Опубликовать'}</button>${e?'<button class="btn b-ghost" onclick="editRef=null;render()">Отмена</button>':''}</div>
   </div>
   <div class="card"><h3>Все материалы</h3>
@@ -816,8 +813,8 @@ function adminSave(){
     let urgentNew=false;
     if(img)fields.img=img;
     if(editRef){Object.assign(arrOf(t).find(x=>x.id===editRef.id),fields);editRef=null;toast('Изменения сохранены')}
-    else{arrOf(t).push({id:uid(),ts:Date.now(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано на сайте');urgentNew=!!fields.urgent}
-    save();render();syncNews().then(()=>{if(urgentNew)adminPushNow()});
+    else{arrOf(t).push({id:uid(),ts:Date.now(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано и отправлено подписчикам');urgentNew=t==='news'}
+    save();render();syncNews().then(()=>{if(urgentNew&&!API.on)showLocalNotice('⚠ МВД предупреждает',fields.title,'./index.html#news/'+arrOf('news').slice(-1)[0].id)});
   };
   const f=$('#mimg')&&$('#mimg').files[0];
   if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
@@ -899,17 +896,17 @@ A.subs=()=>{
   const SRC=API.on&&S.serverSubs?S.serverSubs:S.subs;const q=subQ.toLowerCase();const list=SRC.filter(s=>!q||(s.name+s.phone+s.district).toLowerCase().includes(q));
   return `<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Подписчики (${SRC.length})</h3><button class="btn b-navy" onclick="exportSubs()">⬇ Скачать в Excel</button></div>
   <input id="subq" placeholder="🔎 Поиск по ФИО, телефону, району" value="${esc(subQ)}" style="margin:12px 0" oninput="subQ=this.value;clearTimeout(window._sq);window._sq=setTimeout(()=>{render();const i=$('#subq');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)">
-  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.hasPush===false&&API.on?'<span class="small" style="color:var(--red)">не разрешил</span> ':''}${s.push?'в '+esc(s.time):'выкл'}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
+  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.hasPush===false&&API.on?'<span class="small" style="color:var(--red)">не разрешил</span> ':''}${s.push?'вкл':'выкл'}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
   <p class="small muted">В статистике дополнительно учтены ${S.stat.base.toLocaleString('ru-RU')} демо-подписчиков.</p></div>`;
 };
 function delSub(id){if(!confirm('Удалить подписчика?'))return;if(API.on&&S.serverSubs){api('admin/subs/'+id,{method:'DELETE',admin:true}).then(()=>{S.serverSubs=S.serverSubs.filter(s=>s.id!==id);render()}).catch(()=>toast('Не удалось удалить'));return}S.subs=S.subs.filter(s=>s.id!==id);if(S.me&&S.me.id===id)S.me=null;save();render()}
 
 /* ---- рассылка ---- */
-A.push=()=>{const n=pubNews()[0];return `<div class="grid g2" style="align-items:start"><div class="card"><h3>Ежедневная рассылка</h3>
-  <p class="muted small">Каждый день подписчик получает одно уведомление в выбранное им время — самую свежую опубликованную новость.</p>
-  <p><b>Сегодня уйдёт:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push-уведомление на телефон или компьютер, бесплатно</p>
-  <button class="btn b-red" onclick="adminPushNow()">Отправить сейчас</button></div>
-  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). СМС не используются. Расписание и учёт открытий — на сервере Amvera.</p></div></div>`};
+A.push=()=>{const n=pubNews()[0];return `<div class="grid g2" style="align-items:start"><div class="card"><h3>Рассылка</h3>
+  <p class="muted small">Каждая новая новость сразу уходит уведомлением всем подписчикам. Кнопка ниже — отправить последнюю новость ещё раз.</p>
+  <p><b>Последняя новость:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push-уведомление на телефон или компьютер, бесплатно</p>
+  <button class="btn b-red" onclick="adminPushNow()">Отправить ещё раз</button></div>
+  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). СМС не используются. Отправка — с сервера Amvera в момент публикации.</p></div></div>`};
 
 /* ============ РОУТЕР ============ */
 function render(){

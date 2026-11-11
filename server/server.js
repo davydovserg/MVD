@@ -1,5 +1,5 @@
 // Сервер «МВД предупреждает»: раздаёт сайт, хранит подписчиков и новости,
-// каждый день в выбранное время отправляет push-уведомление.
+// каждую новую новость сразу отправляет push-уведомлением всем подписчикам.
 const express = require('express');
 const webpush = require('web-push');
 const fs = require('fs');
@@ -55,19 +55,15 @@ async function sendTo(sub, payload) {
     return false;
   }
 }
-const newsPayload = n => ({ title: '⚠ МВД предупреждает', body: n.title, url: './index.html#news/' + n.id, tag: 'daily' });
+const newsPayload = n => ({ title: '⚠ МВД предупреждает', body: n.title, url: './index.html#news/' + n.id, tag: 'news-' + n.id });
 
-// Раз в 30 секунд: кому пора — отправляем новость дня (одну в сутки)
-setInterval(async () => {
-  const now = hhmm(), today = ymd(), n = latestNews();
-  if (!n) return;
-  for (const s of db.subs) {
-    if (s.push && s.subscription && s.time === now && s.lastSent !== today) {
-      s.lastSent = today; save();
-      await sendTo(s, newsPayload(n));
-    }
-  }
-}, 30 * 1000);
+// Каждая новая опубликованная новость сразу уходит всем подписчикам
+async function sendAll(n) {
+  let sent = 0, total = 0;
+  for (const s of db.subs) if (s.push !== false && s.subscription) { total++; if (await sendTo(s, newsPayload(n))) sent++; }
+  console.log('push', n.id, sent + '/' + total);
+  return { sent, total };
+}
 
 /* ---------- API ---------- */
 const app = express();
@@ -108,17 +104,22 @@ app.post('/api/test-push', async (req, res) => {
 app.get('/api/news', (req, res) => res.json(db.news.filter(n => !n.status || n.status === 'pub')));
 app.post('/api/admin/login', (req, res) => res.json({ ok: isAdmin(req) }));
 app.get('/api/admin/news', admin, (req, res) => res.json(db.news));
-app.put('/api/admin/news', admin, (req, res) => {
+app.put('/api/admin/news', admin, async (req, res) => {
   if (!Array.isArray(req.body)) return res.status(400).json({ error: 'array' });
-  db.news = req.body; save(); res.json({ ok: true, count: db.news.length });
+  const isPub = n => !n.status || n.status === 'pub';
+  const before = new Set(db.news.filter(isPub).map(n => n.id));
+  db.news = req.body; save();
+  const fresh = db.news.filter(n => isPub(n) && !before.has(n.id) && (n.type === 'news' || n.text));
+  const first = before.size === 0; // первая загрузка — не рассылаем старые новости
+  let result = null;
+  if (!first) for (const n of fresh) result = await sendAll(n);
+  res.json({ ok: true, count: db.news.length, sent: result });
 });
 app.get('/api/admin/subs', admin, (req, res) => res.json(db.subs.map(clean)));
 app.delete('/api/admin/subs/:id', admin, (req, res) => { db.subs = db.subs.filter(s => s.id !== req.params.id); save(); res.json({ ok: true }); });
 app.post('/api/admin/push-now', admin, async (req, res) => {
   const n = latestNews(); if (!n) return res.status(404).json({ error: 'no news' });
-  let sent = 0, total = 0;
-  for (const s of db.subs) if (s.push && s.subscription) { total++; if (await sendTo(s, newsPayload(n))) sent++; }
-  res.json({ ok: true, sent, total });
+  res.json({ ok: true, ...(await sendAll(n)) });
 });
 
 /* ---------- сайт ---------- */
