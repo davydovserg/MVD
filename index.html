@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Предупреждён — Новороссийск</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#2f66b3">
+<meta name="theme-color" content="#eef5fe">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-48.png">
 <meta name="apple-mobile-web-app-title" content="Предупреждён">
@@ -14,33 +14,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#eef4fb; --card:#ffffff; --ink:#14263f; --muted:#526581; --line:#d5e2f1;
+  --bg:#f4f9ff; --card:#ffffff; --ink:#14263f; --muted:#526581; --line:#d5e2f1;
   --navy:#2257a3; --navy2:#4a86d1; --red:#c0261f; --red-soft:#fdecea; --amber:#f0c03a; --amber-soft:#fff6d9;
-  --sky:radial-gradient(ellipse at 50% 35%,#6aa2e2 0%,#3f78c4 55%,#2a5fab 100%);
+  --sky:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#eef5fe 45%,#d9e8fa 100%);
   --green:#1d7a46; --green-soft:#e3f3e9; --r:18px; --fs:19px;
 }
 *{box-sizing:border-box}
 html{font-size:var(--fs)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.5}
+body{margin:0;background:linear-gradient(180deg,#ffffff 0%,#f1f7fe 40%,#e6f0fb 100%) fixed;color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.5}
 a{color:var(--navy2)}
 button,input,select,textarea{font:inherit;color:inherit}
 .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
 /* header */
-.top{background:linear-gradient(180deg,#3a74c2,#2b62b0);color:#fff;position:sticky;top:0;z-index:20}
+.top{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(234,243,253,.96));backdrop-filter:blur(8px);border-bottom:1px solid var(--line);color:var(--ink);position:sticky;top:0;z-index:20}
 .top .wrap{display:flex;align-items:center;gap:14px;min-height:72px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;margin-right:auto}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);margin-right:auto}
 .brand b{display:block;font-size:1.15rem;letter-spacing:.01em}
 .brand small{display:block;font-size:.72rem;opacity:.75;line-height:1.2}
 .nav{display:flex;gap:4px;flex-wrap:wrap}
-.nav a{color:#fff;text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:500;font-size:.9rem}
-.nav a.on,.nav a:hover{background:rgba(255,255,255,.14)}
-.fsbtn{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:12px;padding:8px 12px;font-weight:700;cursor:pointer}
-.burger{display:none;background:none;border:0;color:#fff;font-size:1.6rem;cursor:pointer}
+.nav a{color:var(--ink);text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:500;font-size:.9rem}
+.nav a.on,.nav a:hover{background:#dde9f8;color:var(--navy)}
+.fsbtn{background:#dde9f8;border:0;color:var(--navy);border-radius:12px;padding:8px 12px;font-weight:700;cursor:pointer}
+.burger{display:none;background:none;border:0;color:var(--navy);font-size:1.6rem;cursor:pointer}
 .alertbar{background:var(--amber);color:#2a1d00;font-weight:600;font-size:.88rem}
 .alertbar .wrap{display:flex;gap:10px;align-items:center;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
 .alertbar a{color:#2a1d00;font-weight:800}
 @media(max-width:900px){
-  .nav{display:none;position:absolute;left:0;right:0;top:72px;background:var(--navy);flex-direction:column;padding:8px 16px 16px}
+  .nav{display:none;position:absolute;left:0;right:0;top:72px;background:#f7fbff;border-bottom:1px solid var(--line);box-shadow:0 10px 20px rgba(30,80,150,.08);flex-direction:column;padding:8px 16px 16px}
   .nav.open{display:flex}.burger{display:block}
 }
 /* common */
@@ -70,9 +70,9 @@ textarea{min-height:200px;resize:vertical}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .hide{display:none!important}
 /* hero */
-.today{background:var(--sky);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
-.today h1{color:#fff}.today p{opacity:.9}
-.today .date{font-size:.85rem;opacity:.8;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.today{background:var(--sky);border:1px solid #d3e3f6;box-shadow:0 12px 30px rgba(40,100,180,.08);color:var(--ink);border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
+.today h1{color:var(--navy)}.today p{color:var(--muted)}
+.today .date{font-size:.85rem;color:var(--navy2);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .sub-box{background:#fff;color:var(--ink);border-radius:18px;padding:22px}
 @media(max-width:820px){.today{grid-template-columns:1fr;padding:22px}}
 .tile{display:block;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:22px;padding:26px;transition:transform .2s,border-color .2s}
@@ -89,8 +89,8 @@ textarea{min-height:200px;resize:vertical}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(20,45,85,.55);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:30px 12px;overflow:auto}
 .modal.open{display:flex}
-.modal.locked{background:var(--sky)}.modal.locked .x{display:none}
-.mbox{background:#fff;border-radius:22px;max-width:760px;width:100%;padding:28px;position:relative}
+.modal.locked{background:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#e8f1fc 60%,#d4e5f9 100%)}.modal.locked .x{display:none}
+.mbox{background:#fff;box-shadow:0 20px 50px rgba(30,80,150,.15);border-radius:22px;max-width:760px;width:100%;padding:28px;position:relative}
 .x{position:absolute;right:14px;top:14px;border:0;background:#eef2f7;width:46px;height:46px;border-radius:50%;font-size:1.3rem;cursor:pointer}
 .article p{font-size:1.05rem}
 .share{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
@@ -127,8 +127,8 @@ th{color:var(--muted);font-weight:600}
 .toast{opacity:0;visibility:hidden;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 .demo{background:#fff7e0;border:1px dashed #d9a400;border-radius:12px;padding:10px 14px;font-size:.8rem;color:#6b4e00}
-footer{background:#1e4f95;color:#dbe6f5;padding:36px 0;font-size:.85rem}
-footer a{color:#fff}
+footer{background:linear-gradient(180deg,#e9f2fc,#dbe8f8);border-top:1px solid var(--line);color:var(--muted);padding:36px 0;font-size:.85rem}
+footer a{color:var(--navy)}
 footer .grid{grid-template-columns:2fr 1fr 1fr}
 @media(max-width:820px){footer .grid{grid-template-columns:1fr}}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -194,7 +194,7 @@ code{background:#eef2f7;padding:2px 6px;border-radius:6px}
 @media(max-width:900px){.adm{grid-template-columns:1fr}.aside{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}.aside button{white-space:nowrap}}
 .stafftag{display:none}
 body.staff .alertbar,body.staff .nav,body.staff .fsbtn,body.staff .burger,body.staff .mnav,body.staff footer{display:none!important}
-body.staff .top{background:#1e4f95}
+body.staff .top{background:linear-gradient(180deg,#fff,#eaf3fd)}
 body.staff .stafftag{display:inline-block;background:var(--amber);color:#2a1d00;font-weight:800;font-size:.78rem;padding:6px 12px;border-radius:999px}
 body.staff main{padding-bottom:40px}
 .switch{display:flex;align-items:center;gap:12px;font-weight:600}
@@ -223,18 +223,18 @@ body.staff main{padding-bottom:40px}
 
 <footer><div class="wrap grid">
   <div>
-    <b style="color:#fff;font-size:1rem">Предупреждён — Новороссийск</b>
+    <b style="color:var(--navy);font-size:1rem">Предупреждён — Новороссийск</b>
     <p>Информационный проект Управления МВД России по городу Новороссийску. Новости и предупреждения о мошенниках готовят городские СМИ.</p>
     <p>353912, Краснодарский край, г. Новороссийск, Анапское шоссе, д. 57 «А»</p>
   </div>
   <div>
-    <b style="color:#fff">Дежурная часть</b><br>
+    <b style="color:var(--navy)">Дежурная часть</b><br>
     <a href="tel:102">102</a><br>
     <a href="tel:+78617605510">8 (8617) 60-55-10</a><br>
     <a href="tel:+78617605520">8 (8617) 60-55-20</a>
   </div>
   <div>
-    <b style="color:#fff">Управление</b><br>
+    <b style="color:var(--navy)">Управление</b><br>
     <span>Секретариат: 8 (8617) 60-55-51</span>
   </div>
 </div></footer>
@@ -408,7 +408,7 @@ R.home=()=>{
       <p>${n?esc(n.text.split('\n')[0].slice(0,220))+'…':''}</p>
       <div class="row" style="margin-top:16px">
         ${n?`<a class="btn big b-amber" href="#news/${n.id}">Читать полностью</a>`:''}
-        <a class="btn big b-ghost" style="background:transparent;color:#fff;border-color:#fff" href="#help">Мне звонят мошенники</a>
+        <a class="btn big b-ghost" href="#help">Мне звонят мошенники</a>
       </div>
     </div>
   </section>
