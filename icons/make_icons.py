@@ -13,8 +13,22 @@ bbox = src.getbbox()
 if bbox:
     src = src.crop(bbox)
 
+def sky(size):
+    """Радиальный градиент: светлый центр, синие края — как на образце."""
+    import math
+    img = Image.new("RGBA", (size, size))
+    px = img.load()
+    c1, c2, c3 = (106, 162, 226), (63, 120, 196), (42, 95, 171)
+    cx, cy, R = size / 2, size * 0.42, size * 0.75
+    for y in range(size):
+        for x in range(size):
+            t = min(1, math.hypot(x - cx, y - cy) / R)
+            a, b, k = (c1, c2, t / .55) if t < .55 else (c2, c3, (t - .55) / .45)
+            px[x, y] = tuple(int(a[i] + (b[i] - a[i]) * k) for i in range(3)) + (255,)
+    return img
+
 def make(size, scale, name):
-    bg = Image.new("RGBA", (size, size), BLUE + (255,))
+    bg = sky(size)
     box = int(size * scale)
     em = src.copy()
     em.thumbnail((box, box), Image.LANCZOS)

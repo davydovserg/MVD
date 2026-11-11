@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Предупреждён — Новороссийск</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0e2a47">
+<meta name="theme-color" content="#2f66b3">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-48.png">
 <meta name="apple-mobile-web-app-title" content="Предупреждён">
@@ -14,8 +14,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f5f3ee; --card:#ffffff; --ink:#14202e; --muted:#5a6676; --line:#e2ddd3;
-  --navy:#0e2a47; --navy2:#173d66; --red:#c0261f; --red-soft:#fdecea; --amber:#f2b01e; --amber-soft:#fff4d6;
+  --bg:#eef4fb; --card:#ffffff; --ink:#14263f; --muted:#526581; --line:#d5e2f1;
+  --navy:#2257a3; --navy2:#4a86d1; --red:#c0261f; --red-soft:#fdecea; --amber:#f0c03a; --amber-soft:#fff6d9;
+  --sky:radial-gradient(ellipse at 50% 35%,#6aa2e2 0%,#3f78c4 55%,#2a5fab 100%);
   --green:#1d7a46; --green-soft:#e3f3e9; --r:18px; --fs:19px;
 }
 *{box-sizing:border-box}
@@ -25,7 +26,7 @@ a{color:var(--navy2)}
 button,input,select,textarea{font:inherit;color:inherit}
 .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
 /* header */
-.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top{background:linear-gradient(180deg,#3a74c2,#2b62b0);color:#fff;position:sticky;top:0;z-index:20}
 .top .wrap{display:flex;align-items:center;gap:14px;min-height:72px}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;margin-right:auto}
 .brand b{display:block;font-size:1.15rem;letter-spacing:.01em}
@@ -69,7 +70,7 @@ textarea{min-height:200px;resize:vertical}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .hide{display:none!important}
 /* hero */
-.today{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
+.today{background:var(--sky);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
 .today h1{color:#fff}.today p{opacity:.9}
 .today .date{font-size:.85rem;opacity:.8;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .sub-box{background:#fff;color:var(--ink);border-radius:18px;padding:22px}
@@ -86,9 +87,9 @@ textarea{min-height:200px;resize:vertical}
 @media(max-width:620px){.ni{grid-template-columns:1fr}.ni .img{min-height:140px}}
 .meta{font-size:.78rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 /* modal */
-.modal{position:fixed;inset:0;background:rgba(10,20,35,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:30px 12px;overflow:auto}
+.modal{position:fixed;inset:0;background:rgba(20,45,85,.55);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:30px 12px;overflow:auto}
 .modal.open{display:flex}
-.modal.locked{background:rgba(10,24,42,.94)}.modal.locked .x{display:none}
+.modal.locked{background:var(--sky)}.modal.locked .x{display:none}
 .mbox{background:#fff;border-radius:22px;max-width:760px;width:100%;padding:28px;position:relative}
 .x{position:absolute;right:14px;top:14px;border:0;background:#eef2f7;width:46px;height:46px;border-radius:50%;font-size:1.3rem;cursor:pointer}
 .article p{font-size:1.05rem}
@@ -126,7 +127,7 @@ th{color:var(--muted);font-weight:600}
 .toast{opacity:0;visibility:hidden;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 .demo{background:#fff7e0;border:1px dashed #d9a400;border-radius:12px;padding:10px 14px;font-size:.8rem;color:#6b4e00}
-footer{background:var(--navy);color:#cfd8e3;padding:36px 0;font-size:.85rem}
+footer{background:#1e4f95;color:#dbe6f5;padding:36px 0;font-size:.85rem}
 footer a{color:#fff}
 footer .grid{grid-template-columns:2fr 1fr 1fr}
 @media(max-width:820px){footer .grid{grid-template-columns:1fr}}
@@ -137,7 +138,7 @@ footer .grid{grid-template-columns:2fr 1fr 1fr}
   :root{--r:16px}
   main{padding:18px 0 110px}
   .top .wrap{min-height:62px}.nav{top:62px}
-  .brand svg{width:38px;height:44px}.brand b{font-size:1rem}
+  .brand img{width:56px;height:auto}.brand b{font-size:1rem}
   .alertbar{font-size:.78rem}
   .today{border-radius:20px;padding:20px}
   .today .row .btn{width:100%}
@@ -193,7 +194,7 @@ code{background:#eef2f7;padding:2px 6px;border-radius:6px}
 @media(max-width:900px){.adm{grid-template-columns:1fr}.aside{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}.aside button{white-space:nowrap}}
 .stafftag{display:none}
 body.staff .alertbar,body.staff .nav,body.staff .fsbtn,body.staff .burger,body.staff .mnav,body.staff footer{display:none!important}
-body.staff .top{background:#081b30}
+body.staff .top{background:#1e4f95}
 body.staff .stafftag{display:inline-block;background:var(--amber);color:#2a1d00;font-weight:800;font-size:.78rem;padding:6px 12px;border-radius:999px}
 body.staff main{padding-bottom:40px}
 .switch{display:flex;align-items:center;gap:12px;font-weight:600}
@@ -209,7 +210,7 @@ body.staff main{padding-bottom:40px}
 
 <header class="top"><div class="wrap">
   <a class="brand" href="#home">
-    <svg width="46" height="52" viewBox="0 0 46 52" aria-hidden="true"><path d="M23 2 43 9v15c0 13-8.6 22.5-20 26C11.6 46.5 3 37 3 24V9z" fill="#f2b01e"/><path d="M23 8 37 13v11c0 9.6-6 17-14 20-8-3-14-10.4-14-20V13z" fill="#0e2a47"/><path d="m15 25 6 6 11-12" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <img src="icons/emblem.png" alt="Эмблема МВД России" width="72" height="42" style="width:72px;height:auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.25))">
     <span><b>Предупреждён</b><small>Новороссийск против мошенников</small></span>
   </a>
   <nav class="nav" id="nav"></nav>
@@ -494,7 +495,7 @@ const ageOf=b=>b?Math.floor((Date.now()-new Date(b))/31557600000):'';
 function quickSub(){const p=$('#hp').value.trim();if(p.replace(/\D/g,'').length<10){toast('Введите номер телефона полностью');return}pendingPhone=p;regMode=!S.subs.some(s=>normPh(s.phone)===normPh(p));location.hash='cabinet'}
 const inModal=()=>!!document.querySelector('#mbody #regmodal');
 function regModal(){
-  openModal(`<div id="regmodal"><div style="font-size:2.4rem">🛡</div><h2 style="margin:.2em 0 .3em">${regMode?'Регистрация':'Вход в кабинет'}</h2>
+  openModal(`<div id="regmodal"><img src="icons/emblem.png" alt="" style="width:110px;height:auto"><h2 style="margin:.2em 0 .3em">${regMode?'Регистрация':'Вход в кабинет'}</h2>
   <p class="muted" style="margin-top:0">${regMode?'Чтобы пользоваться сайтом, заполните данные. Раз в день на телефон будет приходить короткое предупреждение о новых схемах мошенников.':'Введите номер телефона, с которым регистрировались.'}</p>
   ${authInner()}</div>`);
   $('#modal').classList.add('locked');
