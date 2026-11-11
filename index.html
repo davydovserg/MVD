@@ -63,7 +63,7 @@ textarea{min-height:200px;resize:vertical}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .hide{display:none!important}
 /* hero */
-.today{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center}
+.today{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
 .today h1{color:#fff}.today p{opacity:.9}
 .today .date{font-size:.85rem;opacity:.8;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .sub-box{background:#fff;color:var(--ink);border-radius:18px;padding:22px}
@@ -82,6 +82,7 @@ textarea{min-height:200px;resize:vertical}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(10,20,35,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:30px 12px;overflow:auto}
 .modal.open{display:flex}
+.modal.locked{background:rgba(10,24,42,.94)}.modal.locked .x{display:none}
 .mbox{background:#fff;border-radius:22px;max-width:760px;width:100%;padding:28px;position:relative}
 .x{position:absolute;right:14px;top:14px;border:0;background:#eef2f7;width:46px;height:46px;border-radius:50%;font-size:1.3rem;cursor:pointer}
 .article p{font-size:1.05rem}
@@ -329,7 +330,7 @@ const para=t=>esc(t).split(/\n\s*\n|\n/).map(p=>p.trim()?`<p>${p}</p>`:'').join(
 const fmtD=d=>new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
 function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2800)}
 function openModal(h){$('#mbody').innerHTML=h;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
-function closeModal(){$('#modal').classList.remove('open');document.body.style.overflow=''}
+function closeModal(){if($('#modal').classList.contains('locked')&&!S.me)return;$('#modal').classList.remove('locked');$('#modal').classList.remove('open');document.body.style.overflow=''}
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
 const pubNews=()=>S.news.filter(n=>n.status==='pub').sort((a,b)=>b.date.localeCompare(a.date));
 const totalSubs=()=>S.stat.base+S.subs.length;
@@ -398,14 +399,6 @@ R.home=()=>{
         ${n?`<a class="btn big b-amber" href="#news/${n.id}">Читать полностью</a>`:''}
         <a class="btn big b-ghost" style="background:transparent;color:#fff;border-color:#fff" href="#help">Мне звонят мошенники</a>
       </div>
-    </div>
-    <div class="sub-box">
-      <h3>🔔 Одно предупреждение в день</h3>
-      <p class="small muted" style="margin:.3em 0 .6em">Каждый день в удобное время на телефон придёт короткое сообщение о новой схеме обмана.</p>
-      ${S.me?`<p><b>Вы подписаны</b>, ${esc(firstName(S.me.name))}. Уведомление приходит в ${esc(S.me.time||'10:00')}.</p><a class="btn b-navy" style="width:100%" href="#cabinet">Мой кабинет</a>`
-      :`<label for="hp">Номер телефона</label><input id="hp" type="tel" placeholder="+7 900 000-00-00" inputmode="tel">
-      <button class="btn b-red" style="width:100%;margin-top:12px" onclick="quickSub()">Подписаться бесплатно</button>
-      <p class="small muted" style="margin-bottom:0">Уже подписано ${totalSubs().toLocaleString('ru-RU')} жителей Новороссийска</p>`}
     </div>
   </section>
 
@@ -491,25 +484,26 @@ const ageOf=b=>b?Math.floor((Date.now()-new Date(b))/31557600000):'';
 function quickSub(){const p=$('#hp').value.trim();if(p.replace(/\D/g,'').length<10){toast('Введите номер телефона полностью');return}pendingPhone=p;regMode=!S.subs.some(s=>normPh(s.phone)===normPh(p));location.hash='cabinet'}
 const inModal=()=>!!document.querySelector('#mbody #regmodal');
 function regModal(){
-  openModal(`<div id="regmodal"><div style="font-size:2.4rem">🛡</div><h2 style="margin:.2em 0 .3em">${regMode?'Зарегистрируйтесь — это бесплатно':'Вход в кабинет'}</h2>
-  <p class="muted" style="margin-top:0">${regMode?'Каждый день на телефон будет приходить одно короткое предупреждение о новых схемах мошенников.':'Введите номер телефона, с которым регистрировались.'}</p>
-  ${authInner()}
-  <button class="btn" style="width:100%;margin-top:6px;background:none;color:var(--muted)" onclick="later()">Позже</button></div>`);
+  openModal(`<div id="regmodal"><div style="font-size:2.4rem">🛡</div><h2 style="margin:.2em 0 .3em">${regMode?'Регистрация':'Вход в кабинет'}</h2>
+  <p class="muted" style="margin-top:0">${regMode?'Чтобы пользоваться сайтом, заполните данные. Раз в день на телефон будет приходить короткое предупреждение о новых схемах мошенников.':'Введите номер телефона, с которым регистрировались.'}</p>
+  ${authInner()}</div>`);
+  $('#modal').classList.add('locked');
 }
 function refreshAuth(){if(inModal())regModal();else render()}
 function later(){try{sessionStorage.setItem('pred_later','1')}catch(e){}closeModal()}
 function maybeAskReg(r){
-  if(S.me||['cabinet','smi','smi-register','admin'].includes(r))return;
-  let skip=false;try{skip=sessionStorage.getItem('pred_later')==='1'}catch(e){}
-  if(skip||$('#modal').classList.contains('open'))return;
-  regMode=true;setTimeout(()=>{if(!S.me&&!$('#modal').classList.contains('open'))regModal()},700);
+  if(S.me||['smi','admin'].includes(r))return;
+  if($('#modal').classList.contains('locked'))return;
+  if($('#modal').classList.contains('open')){$('#modal').classList.remove('open')}
+  regModal();
 }
 function authInner(){return `
       <div id="st1">
       ${regMode?`<label for="rgf">Фамилия, имя, отчество</label><input id="rgf" autocomplete="name" placeholder="Иванова Валентина Петровна" value="${esc(pendingFio)}">
       <label for="rgb">Дата рождения</label><input id="rgb" type="date" value="${esc(pendingBirth)}" max="${today()}">`:''}
       <label for="ph">Номер телефона</label><input id="ph" type="tel" inputmode="tel" placeholder="+7 900 000-00-00" value="${esc(pendingPhone)}">
-      ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
+      ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgpush"> Получать ежедневное предупреждение на телефон</label>
+      <label class="switch" style="margin-top:10px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
       <button class="btn b-amber" style="width:100%;margin-top:12px" onclick="demoFill()">Заполнить тестовыми данными</button>`
       :`<div class="demo" style="margin-top:10px">Тестовый вход: <b>+7 900 111-22-33</b> (Иванова Валентина Петровна) <a href="javascript:void 0" onclick="$('#ph').value='+7 900 111-22-33'">вставить</a></div>`}
       <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="sendCode()">${regMode?'Зарегистрироваться':'Получить код'}</button>
@@ -518,7 +512,8 @@ function authInner(){return `
       <div class="demo" id="democode" style="margin-top:10px"></div>
       <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="checkCode()">Войти</button></div>`;}
 R.cabinet=()=>{
-  if(!S.me) return `<div style="max-width:560px"><h1>${regMode?'Регистрация':'Вход в кабинет'}</h1><p class="lead">${regMode?'Заполните три поля — и каждый день вам будет приходить предупреждение о мошенниках.':'Введите номер телефона, с которым регистрировались. Мы пришлём код в СМС.'}</p>
+  if(!S.me) return `<h1>Личный кабинет</h1><p class="lead">Войдите или зарегистрируйтесь.</p>`;
+  if(false) return `<div style="max-width:560px"><h1>${regMode?'Регистрация':'Вход в кабинет'}</h1><p class="lead">${regMode?'Заполните три поля — и каждый день вам будет приходить предупреждение о мошенниках.':'Введите номер телефона, с которым регистрировались. Мы пришлём код в СМС.'}</p>
     <div class="card">${authInner()}
     </div></div>`;
   const m=S.me;
@@ -544,7 +539,7 @@ R.cabinet=()=>{
   </div>
   <h2>Сохранённое</h2>
   ${fav.length?`<div class="news">${fav.map(x=>x.cat?newsItem(x):memoCard(x)).join('')}</div>`:'<p class="muted">Пока пусто. Нажмите «☆ Сохранить» под новостью.</p>'}
-  <p style="margin-top:30px"><button class="btn b-ghost" onclick="logout()">Выйти</button> <button class="btn" style="color:var(--red);background:none" onclick="unsub()">Отписаться от рассылки</button></p>`;
+  <p style="margin-top:30px"><button class="btn b-ghost" onclick="logout()">Выйти</button> <button class="btn" style="color:var(--red);background:none" onclick="unsub()">Выключить рассылку</button></p>`;
 };
 function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<10){toast('Введите номер полностью');return}
   const known=S.subs.find(s=>normPh(s.phone)===normPh(p));
@@ -552,12 +547,14 @@ function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<
     const f=$('#rgf').value.trim().replace(/\s+/g,' '),b=$('#rgb').value;
     if(f.split(' ').length<2){toast('Укажите фамилию и имя полностью');return}
     if(!b){toast('Укажите дату рождения');return}
+    if(!$('#rgpush').checked){toast('Отметьте «Получать ежедневное предупреждение»');return}
     if(!$('#rgok').checked){toast('Нужно согласие на обработку данных');return}
+    enablePush();
     if(known){toast('Этот номер уже зарегистрирован — войдите');regMode=false;pendingPhone=p;refreshAuth();return}
     pendingFio=f;pendingBirth=b;
   } else if(!known){toast('Номер не найден — зарегистрируйтесь');regMode=true;pendingPhone=p;refreshAuth();return}
   pendingPhone=p;pendingCode=String(Math.floor(1000+Math.random()*9000));$('#st1').classList.add('hide');$('#st2').classList.remove('hide');$('#democode').textContent='Тестовый режим: СМС не отправляется, код '+pendingCode+' уже подставлен — нажмите «Войти».';$('#cd').value=pendingCode;$('#cd').focus()}
-function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
+function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;$('#rgpush').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
 function checkCode(){if($('#cd').value.trim()!==pendingCode){toast('Неверный код');return}
   let sub=S.subs.find(s=>normPh(s.phone)===normPh(pendingPhone));
   if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:'10:00',district:'Центральный',fav:[]};S.subs.push(sub)}
@@ -566,7 +563,7 @@ function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('
 async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value;S.me.sms=$('#csms').checked;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
 function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
 function logout(){S.me=null;save();render()}
-function unsub(){if(!confirm('Отписаться от ежедневных предупреждений?'))return;S.subs=S.subs.filter(s=>s.id!==S.me.id);S.me=null;save();toast('Вы отписаны');render()}
+function unsub(){if(!confirm('Выключить ежедневные предупреждения? Включить снова можно здесь же.'))return;S.me.push=false;S.me.sms=false;sync();toast('Рассылка выключена');render()}
 
 /* ---------- ПОРТАЛ СМИ ---------- */
 R.smi=()=>{
@@ -861,6 +858,7 @@ function after(r){
   if(r==='schemes'){let cat='';const draw=()=>{const q=$('#sq').value.toLowerCase();$('#slist').innerHTML=S.schemes.filter(s=>(!s.status||s.status==='pub')&&(!cat||s.cat===cat)&&(!q||(s.title+s.sign+s.todo+CATS[s.cat]).toLowerCase().includes(q))).map(schemeCard).join('')||'<p class="muted">Ничего не найдено.</p>'};
     $('#schips').onclick=e=>{if(e.target.dataset.c===undefined)return;cat=e.target.dataset.c;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));draw()};$('#sq').oninput=draw;draw()}
   if(r==='admin'&&atab==='mat'&&$('#mt'))smiType();
+  maybeAskReg(r);
   window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',()=>{closeModal();render()});
@@ -869,7 +867,6 @@ let fs=19;try{fs=+localStorage.getItem('pred_fs')||19}catch(e){}
 const applyFs=()=>document.documentElement.style.setProperty('--fs',fs+'px');applyFs();
 $('#fsbtn').onclick=()=>{fs=fs>=25?17:fs+3;applyFs();try{localStorage.setItem('pred_fs',fs)}catch(e){}toast(fs>=25?'Самый крупный шрифт':'Шрифт '+(fs>19?'увеличен':'обычный'))};
 render();
-maybeAskReg((location.hash||'#home').slice(1).split('/')[0]);
 </script>
 </body>
 </html>
