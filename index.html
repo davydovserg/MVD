@@ -14,14 +14,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f4f9ff; --card:#ffffff; --ink:#14263f; --muted:#526581; --line:#d5e2f1;
+  --bg:#f4f9ff; --card:#ffffff; --ink:#0b1220; --muted:#2f3a4a; --line:#d5e2f1;
   --navy:#2257a3; --navy2:#4a86d1; --red:#c0261f; --red-soft:#fdecea; --amber:#f0c03a; --amber-soft:#fff6d9;
   --sky:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#eef5fe 45%,#d9e8fa 100%);
   --green:#1d7a46; --green-soft:#e3f3e9; --r:18px; --fs:19px;
 }
 *{box-sizing:border-box}
 html{font-size:var(--fs)}
-body{margin:0;background:linear-gradient(180deg,#ffffff 0%,#f1f7fe 40%,#e6f0fb 100%) fixed;color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.5}
+body{margin:0;background:linear-gradient(180deg,#ffffff 0%,#f1f7fe 40%,#e6f0fb 100%) fixed;color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 a{color:var(--navy2)}
 button,input,select,textarea{font:inherit;color:inherit}
 .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
@@ -71,8 +71,8 @@ textarea{min-height:200px;resize:vertical}
 .hide{display:none!important}
 /* hero */
 .today{background:var(--sky);border:1px solid #d3e3f6;box-shadow:0 12px 30px rgba(40,100,180,.08);color:var(--ink);border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
-.today h1{color:var(--navy)}.today p{color:var(--muted)}
-.today .date{font-size:.85rem;color:var(--navy2);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.today h1{color:#000;font-weight:800}.today p{color:#111;font-size:1.05rem;font-weight:500}
+.today .date{font-size:.85rem;color:#1a1a1a;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 .sub-box{background:#fff;color:var(--ink);border-radius:18px;padding:22px}
 @media(max-width:820px){.today{grid-template-columns:1fr;padding:22px}}
 .tile{display:block;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:22px;padding:26px;transition:transform .2s,border-color .2s}
@@ -83,6 +83,7 @@ textarea{min-height:200px;resize:vertical}
 .news{display:grid;gap:14px}
 .ni{display:grid;grid-template-columns:150px 1fr;gap:18px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer}
 .ni:hover{border-color:var(--navy)}
+.ni h3,.tile h3,.card h3,.memo h3{color:#000}.ni .muted,.tile .muted{color:#222}.meta{color:#333}
 .ni .img{border-radius:12px;background:#dfe6ef center/cover;min-height:110px;display:grid;place-items:center;font-size:2.4rem}
 @media(max-width:620px){.ni{grid-template-columns:1fr}.ni .img{min-height:140px}}
 .meta{font-size:.78rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
