@@ -122,8 +122,9 @@ th{color:var(--muted);font-weight:600}
 .tabs button{border:0;background:#e7ebf1;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
 .tabs button.on{background:var(--navy);color:#fff}
 .qr{background:#fff;padding:14px;border-radius:14px;display:inline-block;border:1px solid var(--line)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:16px 24px;border-radius:14px;font-weight:600;z-index:80;transition:transform .3s;max-width:90vw}
-.toast.show{transform:translateX(-50%) translateY(0)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:16px 24px;border-radius:14px;font-weight:600;z-index:80;transition:transform .3s,opacity .3s,visibility .3s;max-width:90vw}
+.toast{opacity:0;visibility:hidden;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 .demo{background:#fff7e0;border:1px dashed #d9a400;border-radius:12px;padding:10px 14px;font-size:.8rem;color:#6b4e00}
 footer{background:var(--navy);color:#cfd8e3;padding:36px 0;font-size:.85rem}
 footer a{color:#fff}
@@ -321,6 +322,9 @@ if(!S.helpSteps)S.helpSteps=[['Положите трубку','Не спорьт
 if(!S.alert)S.alert='⚠ Сотрудники полиции, банков и Госуслуг никогда не просят перевести деньги или назвать код из СМС.';
 S.smiUsers.forEach(u=>{if(!u.login){if(u.id==='u1'){u.login='ivanova';u.pass='nvr2026'}else{u.login='smi'+u.id;u.pass='nvr2026'}}});
 if(!S.smiUsers.some(u=>u.login==='petrov'))S.smiUsers.push({id:'u2',fio:'Петров Алексей Игоревич',media:'«Новороссийск 24»',pos:'Редактор',phone:'+7 918 000-00-02',login:'petrov',pass:'nvr2026',status:'ok',date:dAgo(12)});
+if(!S.news.some(n=>n.id==='n0'))S.news.unshift({id:'n0',ts:Date.now(),type:'news',cat:'shop',title:'Мошенники похищают учётные записи в мессенджерах, используя поддельные сайты популярных маркетплейсов',date:today(),author:'УМВД по г. Новороссийску',urgent:true,status:'pub',views:0,shares:0,
+  text:'Злоумышленники создают фишинговые сайты, визуально имитирующие популярный маркетплейс. Внешне такие ресурсы практически не отличаются от оригинала. Знакомый дизайн, привычный каталог товаров и интерфейс создают у пользователей впечатление, что они находятся на официальном сайте интернет-магазина.'});
+S.news.forEach(n=>{if(n.id!=='n0')n.urgent=false});
 S.smiUsers=S.smiUsers.filter(u=>u.status!=='wait');
 save();
 const sec=id=>S.sections.find(x=>x.id===id);
@@ -338,7 +342,7 @@ function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show')
 function openModal(h){$('#mbody').innerHTML=h;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
 function closeModal(){if($('#modal').classList.contains('locked')&&!S.me)return;$('#modal').classList.remove('locked');$('#modal').classList.remove('open');document.body.style.overflow=''}
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
-const pubNews=()=>S.news.filter(n=>n.status==='pub').sort((a,b)=>b.date.localeCompare(a.date));
+const pubNews=()=>S.news.filter(n=>n.status==='pub').sort((a,b)=>b.date.localeCompare(a.date)||(b.ts||0)-(a.ts||0));
 const totalSubs=()=>S.stat.base+S.subs.length;
 
 /* ============ ПОДЕЛИТЬСЯ ============ */
@@ -562,7 +566,7 @@ function demoFill(){$('#rgf').value='Смирнова Людмила Алекс�
 function finishAuth(){
   let sub=S.subs.find(s=>normPh(s.phone)===normPh(pendingPhone));
   if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:pendingTime,district:'Центральный',fav:[]};S.subs.push(sub)}
-  S.me=sub;save();closeModal();toast('Готово! Предупреждения будут приходить в '+S.me.time);render()}
+  S.me=sub;save();closeModal();render()}
 function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('#cy').value){toast('ФИО и дата рождения обязательны');return}Object.assign(S.me,{name:f,birth:$('#cy').value,district:$('#cdst').value});sync();toast('Данные сохранены');render()}
 async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value||S.me.time;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
 function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
@@ -746,7 +750,7 @@ function adminSave(){
   const done=img=>{
     if(img)fields.img=img;
     if(editRef){Object.assign(arrOf(t).find(x=>x.id===editRef.id),fields);editRef=null;toast('Изменения сохранены')}
-    else{arrOf(t).push({id:uid(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано на сайте');if(fields.urgent){S.stat.push.sent+=totalSubs();sendTodayPush()}}
+    else{arrOf(t).push({id:uid(),ts:Date.now(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано на сайте');if(fields.urgent){S.stat.push.sent+=totalSubs();sendTodayPush()}}
     save();render();
   };
   const f=$('#mimg')&&$('#mimg').files[0];
