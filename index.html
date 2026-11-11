@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Предупреждён — Новороссийск</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#f5f3ee; --card:#ffffff; --ink:#14202e; --muted:#5a6676; --line:#e2ddd3;
+  --navy:#0e2a47; --navy2:#173d66; --red:#c0261f; --red-soft:#fdecea; --amber:#f2b01e; --amber-soft:#fff4d6;
+  --green:#1d7a46; --green-soft:#e3f3e9; --r:18px; --fs:19px;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.5}
+a{color:var(--navy2)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+/* header */
+.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:72px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;margin-right:auto}
+.brand b{display:block;font-size:1.15rem;letter-spacing:.01em}
+.brand small{display:block;font-size:.72rem;opacity:.75;line-height:1.2}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{color:#fff;text-decoration:none;padding:10px 14px;border-radius:12px;font-weight:500;font-size:.9rem}
+.nav a.on,.nav a:hover{background:rgba(255,255,255,.14)}
+.fsbtn{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:12px;padding:8px 12px;font-weight:700;cursor:pointer}
+.burger{display:none;background:none;border:0;color:#fff;font-size:1.6rem;cursor:pointer}
+.alertbar{background:var(--amber);color:#2a1d00;font-weight:600;font-size:.88rem}
+.alertbar .wrap{display:flex;gap:10px;align-items:center;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
+.alertbar a{color:#2a1d00;font-weight:800}
+@media(max-width:900px){
+  .nav{display:none;position:absolute;left:0;right:0;top:72px;background:var(--navy);flex-direction:column;padding:8px 16px 16px}
+  .nav.open{display:flex}.burger{display:block}
+}
+/* common */
+main{padding:28px 0 60px}
+h1{font-size:2rem;line-height:1.15;margin:.2em 0 .4em}
+h2{font-size:1.5rem;line-height:1.2;margin:1.6em 0 .6em}
+h3{font-size:1.1rem;margin:.2em 0 .3em}
+.lead{font-size:1.1rem;color:var(--muted);max-width:720px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.grid{display:grid;gap:16px}.grid>*{min-width:0}
+.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.g3,.g2,.g4{grid-template-columns:1fr}h1{font-size:1.6rem}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:14px 22px;font-weight:700;cursor:pointer;text-decoration:none;min-height:54px}
+.btn.big{font-size:1.1rem;padding:18px 26px;min-height:64px}
+.b-navy{background:var(--navy);color:#fff}.b-red{background:var(--red);color:#fff}
+.b-ghost{background:#fff;border:2px solid var(--navy);color:var(--navy)}
+.b-amber{background:var(--amber);color:#2a1d00}
+.btn:hover{filter:brightness(1.08)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;background:#eef2f7;color:var(--navy2);text-transform:uppercase;letter-spacing:.04em}
+.tag.red{background:var(--red-soft);color:var(--red)}.tag.green{background:var(--green-soft);color:var(--green)}.tag.amber{background:var(--amber-soft);color:#7a5600}
+.muted{color:var(--muted)}.small{font-size:.82rem}
+label{display:block;font-weight:600;margin:14px 0 6px}
+input,select,textarea{width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:#fff;min-height:54px}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--amber);border-color:var(--navy)}
+textarea{min-height:200px;resize:vertical}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.hide{display:none!important}
+/* hero */
+.today{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;border-radius:24px;padding:30px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center}
+.today h1{color:#fff}.today p{opacity:.9}
+.today .date{font-size:.85rem;opacity:.8;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sub-box{background:#fff;color:var(--ink);border-radius:18px;padding:22px}
+@media(max-width:820px){.today{grid-template-columns:1fr;padding:22px}}
+.tile{display:block;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:22px;padding:26px;transition:transform .2s,border-color .2s}
+.tile:hover{transform:translateY(-3px);border-color:var(--navy)}
+.tile .ic{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:2rem;margin-bottom:14px}
+.tile h3{font-size:1.25rem}
+/* news */
+.news{display:grid;gap:14px}
+.ni{display:grid;grid-template-columns:150px 1fr;gap:18px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer}
+.ni:hover{border-color:var(--navy)}
+.ni .img{border-radius:12px;background:#dfe6ef center/cover;min-height:110px;display:grid;place-items:center;font-size:2.4rem}
+@media(max-width:620px){.ni{grid-template-columns:1fr}.ni .img{min-height:140px}}
+.meta{font-size:.78rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,20,35,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:30px 12px;overflow:auto}
+.modal.open{display:flex}
+.mbox{background:#fff;border-radius:22px;max-width:760px;width:100%;padding:28px;position:relative}
+.x{position:absolute;right:14px;top:14px;border:0;background:#eef2f7;width:46px;height:46px;border-radius:50%;font-size:1.3rem;cursor:pointer}
+.article p{font-size:1.05rem}
+.share{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.share button,.share a{min-width:0;display:flex;align-items:center;gap:10px;justify-content:center;border:0;border-radius:14px;padding:14px;font-weight:700;cursor:pointer;color:#fff;text-decoration:none;min-height:58px;font-size:.95rem}
+@media(max-width:520px){.share{grid-template-columns:1fr 1fr}}
+.s-max{background:#6b3cff}.s-tg{background:#229ed9}.s-mail{background:#005ff9}.s-sms{background:#1d7a46}.s-copy{background:#4a5566}.s-more{background:var(--navy)}
+/* steps */
+.steps{counter-reset:s;display:grid;gap:14px}
+.step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 20px 84px;position:relative}
+.step:before{counter-increment:s;content:counter(s);position:absolute;left:20px;top:18px;width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;display:grid;place-items:center;font-size:1.2rem}
+.callbox{background:var(--red);color:#fff;border-radius:22px;padding:24px}
+.callbox a.btn{background:#fff;color:var(--red)}
+/* chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:.85rem}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+/* memo */
+.memo{background:var(--amber-soft);border:2px solid #f3d27a;border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.memo .btn{margin-top:auto}
+/* stats */
+.kpi b{display:block;font-size:2rem;line-height:1.1}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:140px 1fr 60px;gap:10px;align-items:center;font-size:.85rem}
+.bar i{display:block;height:22px;border-radius:6px;background:var(--navy2)}
+.bar .t{background:#eef2f7;border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.tabs button{border:0;background:#e7ebf1;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}
+.tabs button.on{background:var(--navy);color:#fff}
+.qr{background:#fff;padding:14px;border-radius:14px;display:inline-block;border:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:16px 24px;border-radius:14px;font-weight:600;z-index:80;transition:transform .3s;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.demo{background:#fff7e0;border:1px dashed #d9a400;border-radius:12px;padding:10px 14px;font-size:.8rem;color:#6b4e00}
+footer{background:var(--navy);color:#cfd8e3;padding:36px 0;font-size:.85rem}
+footer a{color:#fff}
+footer .grid{grid-template-columns:2fr 1fr 1fr}
+@media(max-width:820px){footer .grid{grid-template-columns:1fr}}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tw table{min-width:560px}
+.mnav{display:none}
+@media(max-width:700px){
+  :root{--r:16px}
+  main{padding:18px 0 110px}
+  .top .wrap{min-height:62px}.nav{top:62px}
+  .brand svg{width:38px;height:44px}.brand b{font-size:1rem}
+  .alertbar{font-size:.78rem}
+  .today{border-radius:20px;padding:20px}
+  .today .row .btn{width:100%}
+  .card{padding:18px}
+  .tile{padding:18px;display:grid;grid-template-columns:54px 1fr;column-gap:14px;align-items:start}.tile .ic{grid-row:span 2;width:54px;height:54px;font-size:1.6rem;margin:0}
+  .tile p{margin:.2em 0 0;font-size:.9rem}
+  .step{padding:16px 16px 16px 70px}.step:before{left:14px;width:40px;height:40px}
+  .bar{grid-template-columns:96px 1fr 52px;font-size:.78rem}
+  .mbox{padding:22px 18px;border-radius:18px}
+  .tabs{flex-wrap:nowrap;overflow-x:auto}.tabs button{white-space:nowrap}
+  .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}.chip{white-space:nowrap}
+  footer{padding-bottom:110px}
+  .toast{bottom:96px}
+  .mnav{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.06)}
+  .mnav a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--muted);font-size:.68rem;font-weight:600;padding:6px 2px;border-radius:12px}
+  .mnav a span{font-size:1.5rem;line-height:1}
+  .mnav a.on{color:var(--navy);background:#eef2f7}
+  .mnav a.sos{color:var(--red)}
+}
+@media(max-width:420px){
+  h1{font-size:1.42rem}h2{font-size:1.22rem}
+  .wrap{padding:0 14px}
+  .today h1{font-size:1.38rem}
+  .today p{font-size:.95rem}
+  .btn.big{font-size:1rem;padding:15px 18px;min-height:58px}
+  .kpi b{font-size:1.5rem}
+  .share{gap:8px}.share button{font-size:.85rem;padding:12px 8px}
+  .modal{padding:10px 8px}
+  .mbox{padding:56px 16px 18px}
+  .ni{padding:12px;gap:12px}
+  .bar{grid-template-columns:84px 1fr 46px}
+  .lead{font-size:1rem}
+}
+@media(max-width:350px){
+  .brand small{display:none}
+  .fsbtn{padding:6px 9px}
+  .mnav a{font-size:.6rem}
+  .tile{grid-template-columns:1fr}.tile .ic{grid-row:auto;margin-bottom:10px}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .mnav{display:none}main{padding-bottom:40px}footer{padding-bottom:36px}.top{position:static}
+}
+.adm{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+.adm>section{min-width:0}
+.aside{display:flex;flex-direction:column;gap:6px;position:sticky;top:90px}
+.aside button{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-weight:600;cursor:pointer;text-align:left;font-size:.86rem}
+.aside button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.aside em{margin-left:auto;font-style:normal;background:var(--red);color:#fff;border-radius:999px;padding:0 8px;font-size:.75rem}
+.adm input,.adm select{min-height:46px;padding:10px 12px}
+.acts{white-space:nowrap}.acts button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 9px;cursor:pointer;margin:2px;font-size:.76rem}
+.secrow{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+code{background:#eef2f7;padding:2px 6px;border-radius:6px}
+@media(max-width:900px){.adm{grid-template-columns:1fr}.aside{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}.aside button{white-space:nowrap}}
+.stafftag{display:none}
+body.staff .alertbar,body.staff .nav,body.staff .fsbtn,body.staff .burger,body.staff .mnav,body.staff footer{display:none!important}
+body.staff .top{background:#081b30}
+body.staff .stafftag{display:inline-block;background:var(--amber);color:#2a1d00;font-weight:800;font-size:.78rem;padding:6px 12px;border-radius:999px}
+body.staff main{padding-bottom:40px}
+.switch{display:flex;align-items:center;gap:12px;font-weight:600}
+.switch input{width:28px;height:28px;min-height:0}
+</style>
+</head>
+<body>
+
+<div class="alertbar"><div class="wrap">
+  <span id="alerttext"></span>
+  <a href="tel:102">Позвонить 102</a>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#home">
+    <svg width="46" height="52" viewBox="0 0 46 52" aria-hidden="true"><path d="M23 2 43 9v15c0 13-8.6 22.5-20 26C11.6 46.5 3 37 3 24V9z" fill="#f2b01e"/><path d="M23 8 37 13v11c0 9.6-6 17-14 20-8-3-14-10.4-14-20V13z" fill="#0e2a47"/><path d="m15 25 6 6 11-12" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span><b>Предупреждён</b><small>Новороссийск против мошенников</small></span>
+  </a>
+  <nav class="nav" id="nav"></nav>
+  <span class="stafftag" id="stafftag"></span>
+  <button class="fsbtn" id="fsbtn" title="Крупнее шрифт">А+</button>
+  <button class="burger" id="burger" aria-label="Меню">☰</button>
+</div></header>
+
+<main><div class="wrap" id="app"></div></main>
+
+<footer><div class="wrap grid">
+  <div>
+    <b style="color:#fff;font-size:1rem">Предупреждён — Новороссийск</b>
+    <p>Информационный проект Управления МВД России по городу Новороссийску. Новости и предупреждения о мошенниках готовят городские СМИ.</p>
+    <p>353912, Краснодарский край, г. Новороссийск, Анапское шоссе, д. 57 «А»</p>
+  </div>
+  <div>
+    <b style="color:#fff">Дежурная часть</b><br>
+    <a href="tel:102">102</a><br>
+    <a href="tel:+78617605510">8 (8617) 60-55-10</a><br>
+    <a href="tel:+78617605520">8 (8617) 60-55-20</a>
+  </div>
+  <div>
+    <b style="color:#fff">Для партнёров</b><br>
+    <a href="#smi">Вход для СМИ</a><br>
+    <span>Секретариат: 8 (8617) 60-55-51</span>
+  </div>
+</div></footer>
+
+<nav class="mnav" aria-label="Быстрое меню">
+  <a href="#home" data-r="home"><span>🏠</span>Главная</a>
+  <a href="#schemes" data-r="schemes"><span>📚</span>Схемы</a>
+  <a href="#help" data-r="help" class="sos"><span>🛑</span>Что делать</a>
+  <a href="#cabinet" data-r="cabinet"><span>👤</span>Кабинет</a>
+</nav>
+<div class="modal" id="modal"><div class="mbox"><button class="x" onclick="closeModal()" aria-label="Закрыть">✕</button><div id="mbody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ ДАННЫЕ (прототип: хранятся в браузере) ============ */
+const KEY='predupr_nvr_v1';
+const SMI_PASS='NVR-SMI-2026', ADMIN_PASS='admin2026';
+const CATS={bank:'Звонок «из банка»',rel:'«Родственник в беде»',gos:'Госуслуги и ЖКХ',police:'«Сотрудник полиции/ФСБ»',invest:'Инвестиции и биржа',shop:'Доставка и маркетплейсы',love:'Знакомства',job:'Работа и подработка'};
+const ICON={bank:'🏦',rel:'👵',gos:'🏛',police:'👮',invest:'📈',shop:'📦',love:'💌',job:'💼'};
+const DISTRICTS=['Центральный','Восточный','Южный','Приморский','Новороссийский'];
+const today=()=>new Date().toISOString().slice(0,10);
+const dAgo=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10);
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+function seed(){
+  return {
+    news:[
+      {id:'n1',type:'news',cat:'rel',title:'Пенсионерке позвонили «от внука после ДТП» — деньги забрал курьер',date:today(),author:'«Новороссийский рабочий»',urgent:true,status:'pub',views:1840,shares:312,
+       text:'В Южном районе 78-летней женщине позвонил незнакомец. Он плакал в трубку и говорил, что он её внук и попал в аварию. Затем трубку взял «следователь» и потребовал 400 000 рублей, чтобы «решить вопрос». За деньгами приехал курьер.\n\nПолиция напоминает: если вам звонят и говорят, что родственник попал в беду — положите трубку и сами перезвоните родственнику по его обычному номеру. Никогда не передавайте деньги незнакомым людям.'},
+      {id:'n2',type:'news',cat:'bank',title:'«Служба безопасности банка» просит перевести сбережения на «безопасный счёт»',date:dAgo(1),author:'«Новороссийск 24»',status:'pub',views:1210,shares:188,
+       text:'Мошенники звонят с номеров, похожих на банковские, и сообщают, что кто-то пытается оформить кредит на ваше имя. Чтобы «защитить» деньги, просят перевести их на «безопасный счёт».\n\nБезопасных счетов не существует. Настоящий банк никогда не попросит переводить деньги. Положите трубку и позвоните в банк по номеру на обороте карты.'},
+      {id:'n3',type:'news',cat:'gos',title:'Звонят «из управляющей компании» — просят код для замены счётчиков',date:dAgo(2),author:'NovoNews',status:'pub',views:960,shares:141,
+       text:'Жителям Восточного района звонят от имени управляющей компании и предлагают бесплатно заменить счётчики. Для записи просят продиктовать код из СМС — это код для входа в ваш аккаунт Госуслуг.\n\nКод из СМС нельзя сообщать никому — ни «управляющей компании», ни «Госуслугам», ни «полиции».'},
+      {id:'n4',type:'news',cat:'shop',title:'Фальшивые курьеры: «Ваша посылка задерживается, назовите код»',date:dAgo(4),author:'«Новороссийский рабочий»',status:'pub',views:704,shares:96,
+       text:'Мошенники представляются курьерами службы доставки и сообщают о посылке. Чтобы «подтвердить адрес», просят назвать код из СМС. Если вы ничего не заказывали — просто положите трубку.'}
+    ],
+    schemes:[
+      {id:'s1',cat:'rel',title:'«Мама, я попал в аварию»',sign:'Звонок ночью или рано утром, плач, голос «не похож», срочно нужны деньги, приедет курьер.',todo:'Положить трубку. Перезвонить родственнику самому. Позвонить 102.'},
+      {id:'s2',cat:'bank',title:'«Безопасный счёт»',sign:'«Служба безопасности банка», «на вас оформляют кредит», просят перевести деньги или установить приложение.',todo:'Положить трубку. Позвонить в банк по номеру на карте.'},
+      {id:'s3',cat:'police',title:'«Вы помогаете следствию»',sign:'Звонят «из полиции, ФСБ, ЦБ», просят никому не рассказывать, снять деньги и передать или перевести.',todo:'Полиция не ведёт следствие по телефону. Позвоните 102.'},
+      {id:'s4',cat:'gos',title:'«Продиктуйте код для Госуслуг»',sign:'Замена счётчиков, запись к врачу, перерасчёт пенсии — и просьба назвать код из СМС.',todo:'Никому не называть коды. Сменить пароль Госуслуг, если код уже назвали.'},
+      {id:'s5',cat:'invest',title:'«Пассивный доход на бирже»',sign:'Обещают большой доход, присылают ссылку на «личный кабинет», просят пополнить счёт.',todo:'Проверить компанию на сайте ЦБ. Не переводить деньги.'},
+      {id:'s6',cat:'shop',title:'«Посылка задерживается»',sign:'Звонок или сообщение от «курьера», просят код или оплату по ссылке.',todo:'Проверять заказы только в официальном приложении магазина.'},
+      {id:'s7',cat:'love',title:'Знакомство в интернете',sign:'Быстро признаются в любви, затем просят деньги на билет, лечение или таможню.',todo:'Не переводить деньги людям, которых не видели вживую.'},
+      {id:'s8',cat:'job',title:'«Работа курьером, 10 000 в день»',sign:'Нужно забирать «посылки» у пенсионеров или переводить деньги через свою карту.',todo:'Это соучастие в преступлении. Отказаться и сообщить в полицию.'}
+    ],
+    memos:[
+      {id:'m1',title:'5 правил, которые спасут ваши деньги',author:'УМВД по г. Новороссийску',status:'pub',date:dAgo(3),text:'1. Код из СМС — только для вас.\n2. Банк не звонит с просьбой перевести деньги.\n3. Полиция не ведёт дела по телефону.\n4. Родственник в беде — перезвоните ему сами.\n5. Сомневаетесь — звоните 102.'},
+      {id:'m2',title:'Памятка для внуков: как защитить бабушку',author:'«Новороссийск 24»',status:'pub',date:dAgo(6),text:'1. Поставьте определитель номера на телефон.\n2. Договоритесь о кодовом слове на случай «беды».\n3. Запишите в телефон номер 102 и номер банка.\n4. Подпишите бабушку на ежедневные предупреждения на этом сайте.\n5. Звоните ей чаще — мошенники пользуются одиночеством.'},
+      {id:'m3',title:'Что делать, если вы уже перевели деньги',author:'УМВД по г. Новороссийску',status:'pub',date:dAgo(9),text:'1. Сразу позвоните в банк и заблокируйте карту.\n2. Попросите банк отозвать перевод.\n3. Позвоните 102 или придите в отдел полиции с паспортом.\n4. Сохраните номер, с которого звонили, и все сообщения.'}
+    ],
+    smiUsers:[{id:'u1',fio:'Иванова Мария Сергеевна',birth:'1988-04-12',media:'«Новороссийский рабочий»',pos:'Корреспондент',phone:'+7 918 000-00-01',email:'press@example.ru',cert:'ПР-1123',status:'ok',date:dAgo(20)}],
+    subs:[],
+    me:null, smiMe:null, isAdmin:false,
+    stat:{base:4872,push:{sent:31240,opened:21980},channels:{max:612,tg:488,mail:173,sms:402,copy:236},
+      ages:{'до 30':8,'30–45':12,'45–60':21,'60–70':33,'70+':26},
+      dist:{'Центральный':1240,'Восточный':1105,'Южный':1310,'Приморский':780,'Новороссийский':437},
+      days:[96,112,88,140,131,158,174]}
+  };
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){S=seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+/* тестовые подписчики для показа */
+const DEMO_SUBS=[
+  ['Иванова Валентина Петровна','1948-03-08','+7 900 111-22-33','Южный','10:00'],
+  ['Петров Николай Иванович','1951-11-20','+7 900 222-33-44','Восточный','09:00'],
+  ['Сидорова Галина Михайловна','1945-06-02','+7 900 333-44-55','Центральный','12:00'],
+  ['Ковалёва Анна Сергеевна','1962-01-15','+7 900 444-55-66','Приморский','18:00'],
+  ['Мельников Виктор Павлович','1957-09-30','+7 900 666-77-88','Новороссийский','10:00']
+];
+if(!S.demoSubs){
+  DEMO_SUBS.forEach(([name,birth,phone,district,time],i)=>{if(!S.subs.some(s=>s.phone===phone))S.subs.push({id:'d'+i,name,birth,phone,district,time,push:true,sms:i===2,date:dAgo(i),fav:[]})});
+  S.demoSubs=true;save();
+}
+
+/* ============ УТИЛИТЫ ============ */
+const DEF_SECTIONS=[
+ {id:'news',icon:'📰',title:'Новости',short:'Новости',desc:'Свежие случаи мошенничества в Новороссийске.',on:true,tile:false},
+ {id:'schemes',icon:'📚',title:'Архив схем мошенничества',short:'Архив схем',desc:'Как обманывают: по звонку, в интернете, у двери. Узнайте признаки заранее.',on:true,tile:true},
+ {id:'help',icon:'🛑',title:'Что делать при попытке обмана',short:'Что делать',desc:'Пошагово: что сказать, куда звонить, как вернуть деньги.',on:true,tile:true},
+ {id:'share',icon:'📣',title:'Поделиться предупреждением',short:'Поделиться',desc:'Любую новость отправьте близким в MAX, Telegram, на почту или СМС.',on:true,tile:true},
+ {id:'memos',icon:'📝',title:'Памятки',short:'Памятки',desc:'Короткие правила — распечатать или отправить близким.',on:true,tile:false}];
+if(!S.sections)S.sections=DEF_SECTIONS;
+if(!S.helpSteps)S.helpSteps=[['Положите трубку','Не спорьте и ничего не объясняйте. Это не грубо — это безопасно.'],['Ничего не называйте','Коды из СМС, номер карты, пароль от Госуслуг — никому, даже «полиции».'],['Перезвоните сами','Родственнику — по его обычному номеру. В банк — по номеру на обороте карты.'],['Никому не отдавайте деньги','Ни курьеру, ни «сотруднику банка», ни на «безопасный счёт».'],['Позвоните в полицию','Расскажите, кто звонил и что просили. Это поможет поймать мошенников.'],['Если деньги уже ушли','Сразу звоните в банк — заблокировать карту и отозвать перевод. Затем 102.']];
+if(!S.alert)S.alert='⚠ Сотрудники полиции, банков и Госуслуг никогда не просят перевести деньги или назвать код из СМС.';
+S.smiUsers.forEach(u=>{if(!u.login){if(u.id==='u1'){u.login='ivanova';u.pass='nvr2026'}else{u.login='smi'+u.id;u.pass='nvr2026'}}});
+if(!S.smiUsers.some(u=>u.login==='petrov'))S.smiUsers.push({id:'u2',fio:'Петров Алексей Игоревич',media:'«Новороссийск 24»',pos:'Редактор',phone:'+7 918 000-00-02',login:'petrov',pass:'nvr2026',status:'ok',date:dAgo(12)});
+save();
+const sec=id=>S.sections.find(x=>x.id===id);
+function buildNav(){
+  $('#nav').innerHTML='<a href="#home" data-r="home">Главная</a>'+S.sections.filter(x=>x.on).map(x=>`<a href="#${x.id}" data-r="${x.id}">${esc(x.short||x.title)}</a>`).join('')+'<a href="#cabinet" data-r="cabinet">Личный кабинет</a>';
+  document.querySelectorAll('.mnav a').forEach(a=>{const x=sec(a.dataset.r);a.style.display=x&&!x.on?'none':''});
+  $('#alerttext').textContent=S.alert;
+}
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const para=t=>esc(t).split(/\n\s*\n|\n/).map(p=>p.trim()?`<p>${p}</p>`:'').join('');
+const fmtD=d=>new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2800)}
+function openModal(h){$('#mbody').innerHTML=h;$('#modal').classList.add('open');document.body.style.overflow='hidden'}
+function closeModal(){$('#modal').classList.remove('open');document.body.style.overflow=''}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+const pubNews=()=>S.news.filter(n=>n.status==='pub').sort((a,b)=>b.date.localeCompare(a.date));
+const totalSubs=()=>S.stat.base+S.subs.length;
+
+/* ============ ПОДЕЛИТЬСЯ ============ */
+function shareBar(kind,id){
+  return `<h3 style="margin-top:22px">📣 Предупредить близких</h3>
+  <p class="muted small">Отправьте это маме, папе, бабушке или соседям — одним нажатием.</p>
+  <div class="share">
+    <button class="s-max" onclick="doShare('max','${kind}','${id}')">MAX</button>
+    <button class="s-tg" onclick="doShare('tg','${kind}','${id}')">Telegram</button>
+    <button class="s-mail" onclick="doShare('mail','${kind}','${id}')">Почта / Mail</button>
+    <button class="s-sms" onclick="doShare('sms','${kind}','${id}')">СМС</button>
+    <button class="s-copy" onclick="doShare('copy','${kind}','${id}')">Скопировать</button>
+    <button class="s-more" onclick="doShare('more','${kind}','${id}')">Ещё…</button>
+  </div>`;
+}
+function shareItem(kind,id){
+  const arr=kind==='news'?S.news:kind==='memo'?S.memos:S.schemes;return arr.find(x=>x.id===id);
+}
+async function doShare(ch,kind,id){
+  const it=shareItem(kind,id); if(!it)return;
+  const url=location.origin+location.pathname+'#'+kind+'/'+id;
+  const short=(it.text||it.sign||'').split('\n')[0].slice(0,160);
+  const msg=`⚠ Осторожно, мошенники!\n${it.title}\n${short}\n\nПодробнее: ${url}`;
+  const enc=encodeURIComponent;
+  if(kind==='news'){it.shares=(it.shares||0)+1}
+  S.stat.channels[ch==='more'?'copy':ch]=(S.stat.channels[ch==='more'?'copy':ch]||0)+1; save();
+  if(ch==='tg') window.open(`https://t.me/share/url?url=${enc(url)}&text=${enc('⚠ Осторожно, мошенники! '+it.title)}`,'_blank');
+  else if(ch==='mail') location.href=`mailto:?subject=${enc('Осторожно, мошенники: '+it.title)}&body=${enc(msg)}`;
+  else if(ch==='sms') location.href=`sms:?&body=${enc(msg)}`;
+  else if(ch==='max'||ch==='more'){
+    if(navigator.share){try{await navigator.share({title:it.title,text:msg,url});return}catch(e){return}}
+    await copy(msg); if(ch==='max'){toast('Текст скопирован — вставьте его в чат MAX');window.open('https://web.max.ru/','_blank')}
+  }
+  else { await copy(msg); toast('Текст скопирован — вставьте в любой мессенджер'); }
+}
+async function copy(t){try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}}
+
+/* ============ PUSH ============ */
+async function enablePush(){
+  if(!('Notification' in window)){toast('Этот браузер не поддерживает уведомления');return false}
+  const p=await Notification.requestPermission();
+  if(p!=='granted'){toast('Уведомления не разрешены в браузере');return false}
+  return true;
+}
+function sendTodayPush(){
+  const n=pubNews()[0]; if(!n)return;
+  if('Notification' in window && Notification.permission==='granted'){
+    const nt=new Notification('⚠ Предупреждён: новость дня',{body:n.title,tag:'daily'});
+    nt.onclick=()=>{window.focus();location.hash='news/'+n.id};
+  } else toast('Уведомление: '+n.title);
+}
+
+/* ============ СТРАНИЦЫ ============ */
+const R={};
+R.home=()=>{
+  const list=pubNews(); const n=list[0];
+  return `
+  <section class="today">
+    <div>
+      <div class="date">Предупреждение дня · ${n?fmtD(n.date):''}</div>
+      <h1>${n?esc(n.title):'Сегодня новых схем нет'}</h1>
+      <p>${n?esc(n.text.split('\n')[0].slice(0,220))+'…':''}</p>
+      <div class="row" style="margin-top:16px">
+        ${n?`<a class="btn big b-amber" href="#news/${n.id}">Читать полностью</a>`:''}
+        <a class="btn big b-ghost" style="background:transparent;color:#fff;border-color:#fff" href="#help">Мне звонят мошенники</a>
+      </div>
+    </div>
+    <div class="sub-box">
+      <h3>🔔 Одно предупреждение в день</h3>
+      <p class="small muted" style="margin:.3em 0 .6em">Каждый день в удобное время на телефон придёт короткое сообщение о новой схеме обмана.</p>
+      ${S.me?`<p><b>Вы подписаны</b>, ${esc(firstName(S.me.name))}. Уведомление приходит в ${esc(S.me.time||'10:00')}.</p><a class="btn b-navy" style="width:100%" href="#cabinet">Мой кабинет</a>`
+      :`<label for="hp">Номер телефона</label><input id="hp" type="tel" placeholder="+7 900 000-00-00" inputmode="tel">
+      <button class="btn b-red" style="width:100%;margin-top:12px" onclick="quickSub()">Подписаться бесплатно</button>
+      <p class="small muted" style="margin-bottom:0">Уже подписано ${totalSubs().toLocaleString('ru-RU')} жителей Новороссийска</p>`}
+    </div>
+  </section>
+
+  <h2>Главное</h2>
+  <div class="grid g3">${S.sections.filter(x=>x.on&&x.tile).map(x=>`<a class="tile" href="#${x.id}"><div class="ic" style="background:${TILEBG[x.id]||'#eef2f7'}">${esc(x.icon)}</div><h3>${esc(x.title)}</h3><p class="muted">${esc(x.desc)}</p></a>`).join('')}</div>
+
+  <h2>Последние новости</h2>
+  <div class="news">${list.slice(0,4).map(newsItem).join('')}</div>
+  <p><a class="btn b-ghost" href="#news">Все новости</a></p>
+
+  <h2>Памятки</h2>
+  <div class="grid g3">${S.memos.filter(m=>m.status==='pub').slice(0,3).map(memoCard).join('')}</div>`;
+};
+function newsItem(n){
+  return `<article class="ni" onclick="location.hash='news/${n.id}'">
+    <div class="img" style="${n.img?`background-image:url(${n.img})`:''}">${n.img?'':ICON[n.cat]||'⚠'}</div>
+    <div>
+      <div class="meta">${n.urgent?'<span class="tag red">Срочно</span>':''}<span class="tag">${esc(CATS[n.cat]||'')}</span><span>${fmtD(n.date)}</span><span>${esc(n.author)}</span></div>
+      <h3 style="margin-top:8px">${esc(n.title)}</h3>
+      <p class="muted small" style="margin:0">${esc(n.text.slice(0,150))}…</p>
+    </div></article>`;
+}
+function memoCard(m){
+  return `<div class="memo"><span class="tag amber">Памятка</span><h3>${esc(m.title)}</h3><p class="small muted" style="margin:0">${esc(m.author)}</p>
+  <a class="btn b-navy" href="#memo/${m.id}">Открыть</a></div>`;
+}
+R.news=()=>`<h1>Новости</h1><p class="lead">Свежие случаи мошенничества в Новороссийске. Материалы готовят городские СМИ вместе с полицией.</p>
+  <div class="chips" id="nchips"><button class="chip on" data-c="">Все</button>${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-c="${k}">${v}</button>`).join('')}</div>
+  <div class="news" id="nlist">${pubNews().map(newsItem).join('')}</div>`;
+R.schemes=()=>`<h1>${esc(sec('schemes').title)}</h1><p class="lead">Если вам звонят или пишут так, как описано ниже, — это обман. Положите трубку.</p>
+  <input id="sq" placeholder="🔎 Поиск: например, «банк», «внук», «код»" style="margin-top:8px">
+  <div class="chips" id="schips"><button class="chip on" data-c="">Все</button>${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-c="${k}">${ICON[k]} ${v}</button>`).join('')}</div>
+  <div class="grid g2" id="slist"></div>`;
+function schemeCard(s){
+  return `<div class="card"><div class="meta"><span class="tag">${ICON[s.cat]} ${esc(CATS[s.cat])}</span></div>
+  <h3 style="margin-top:10px">${esc(s.title)}</h3>
+  <p><b>Как узнать:</b> ${esc(s.sign)}</p><p style="margin-bottom:12px"><b style="color:var(--green)">Что делать:</b> ${esc(s.todo)}</p>
+  <button class="btn b-ghost" onclick="openScheme('${s.id}')">Предупредить близких</button></div>`;
+}
+function openScheme(id){const s=S.schemes.find(x=>x.id===id);openModal(`<span class="tag">${ICON[s.cat]} ${esc(CATS[s.cat])}</span><h2 style="margin-top:10px">${esc(s.title)}</h2><p><b>Как узнать:</b> ${esc(s.sign)}</p><p><b>Что делать:</b> ${esc(s.todo)}</p>${shareBar('scheme',id)}`)}
+R.help=()=>`<h1>${esc(sec('help').title)}</h1><p class="lead">Не стесняйтесь и не бойтесь. Мошенники специально торопят и пугают. У вас всегда есть время подумать.</p>
+  <div class="grid g2" style="align-items:start;margin-top:20px">
+  <div class="steps">${S.helpSteps.map(([t,d])=>`<div class="step"><h3>${esc(t)}</h3><p style="margin:0">${esc(d)}</p></div>`).join('')}
+  </div>
+  <div style="display:grid;gap:16px;position:sticky;top:96px">
+    <div class="callbox">
+      <h2 style="margin:0 0 6px;color:#fff">Звоните сразу</h2>
+      <p style="opacity:.9;margin-top:0">Дежурная часть УМВД России по г. Новороссийску — круглосуточно</p>
+      <a class="btn big" style="width:100%" href="tel:102">📞 102</a>
+      <div class="grid g2" style="margin-top:10px">
+        <a class="btn" href="tel:+78617605510">60-55-10</a><a class="btn" href="tel:+78617605520">60-55-20</a>
+      </div>
+    </div>
+    <div class="card small"><b>Адрес:</b> г. Новороссийск, Анапское шоссе, д. 57 «А»<br><b>Секретариат:</b> 8 (8617) 60-55-51<br><b>Приёмная начальника:</b> 8 (8617) 21-68-73<br><b>Почта:</b> <a href="mailto:KRN_ODIR_1909@mvd.ru">KRN_ODIR_1909@mvd.ru</a></div>
+  </div></div>`;
+R.share=()=>`<h1>${esc(sec('share').title)}</h1><p class="lead">Выберите новость, памятку или схему — и отправьте её близким. Пусть знают заранее.</p>
+  <h2>Новости</h2><div class="grid g2">${pubNews().slice(0,6).map(n=>`<div class="card"><h3>${esc(n.title)}</h3>${shareBar('news',n.id)}</div>`).join('')}</div>
+  <h2>Памятки</h2><div class="grid g2">${S.memos.filter(m=>m.status==='pub').map(m=>`<div class="card"><h3>${esc(m.title)}</h3>${shareBar('memo',m.id)}</div>`).join('')}</div>`;
+R.memos=()=>`<h1>Памятки</h1><p class="lead">Короткие правила — их можно распечатать и повесить на холодильник или отправить близким.</p>
+  <div class="grid g3">${S.memos.filter(m=>m.status==='pub').map(memoCard).join('')}</div>`;
+
+function articleView(kind,id){
+  const it=kind==='news'?S.news.find(x=>x.id===id):S.memos.find(x=>x.id===id);
+  if(!it)return `<h1>Материал не найден</h1><a href="#home">На главную</a>`;
+  if(kind==='news'){it.views=(it.views||0)+1;save()}
+  return `<article class="article" style="max-width:780px">
+    <a href="#${kind==='news'?'news':'memos'}">← Назад</a>
+    <div class="meta" style="margin-top:14px">${kind==='memo'?'<span class="tag amber">Памятка</span>':''}${it.urgent?'<span class="tag red">Срочно</span>':''}${it.cat?`<span class="tag">${esc(CATS[it.cat])}</span>`:''}<span>${fmtD(it.date)}</span><span>${esc(it.author)}</span></div>
+    <h1>${esc(it.title)}</h1>
+    ${it.img?`<img src="${it.img}" alt="" style="width:100%;border-radius:18px;margin:10px 0">`:''}
+    ${para(it.text)}
+    <div class="row">${kind==='memo'?'<button class="btn b-ghost" onclick="window.print()">🖨 Распечатать</button>':''}${S.me?`<button class="btn b-ghost" onclick="saveFav('${it.id}')">☆ Сохранить</button>`:''}</div>
+    <div class="card" style="margin-top:20px">${shareBar(kind,id)}</div>
+  </article>`;
+}
+function saveFav(id){S.me.fav=S.me.fav||[];if(!S.me.fav.includes(id))S.me.fav.push(id);save();toast('Сохранено в личном кабинете')}
+
+/* ---------- ЛИЧНЫЙ КАБИНЕТ ---------- */
+let pendingCode=null,pendingPhone='',pendingFio='',pendingBirth='',regMode=true;
+const normPh=p=>String(p).replace(/\D/g,'').slice(-10);
+const firstName=f=>{const w=String(f||'').split(' ');return w.length>2?w[1]+' '+w[2]:(w[1]||w[0]||'')};
+const ageOf=b=>b?Math.floor((Date.now()-new Date(b))/31557600000):'';
+function quickSub(){const p=$('#hp').value.trim();if(p.replace(/\D/g,'').length<10){toast('Введите номер телефона полностью');return}pendingPhone=p;regMode=!S.subs.some(s=>normPh(s.phone)===normPh(p));location.hash='cabinet'}
+const inModal=()=>!!document.querySelector('#mbody #regmodal');
+function regModal(){
+  openModal(`<div id="regmodal"><div style="font-size:2.4rem">🛡</div><h2 style="margin:.2em 0 .3em">${regMode?'Зарегистрируйтесь — это бесплатно':'Вход в кабинет'}</h2>
+  <p class="muted" style="margin-top:0">${regMode?'Каждый день на телефон будет приходить одно короткое предупреждение о новых схемах мошенников.':'Введите номер телефона, с которым регистрировались.'}</p>
+  ${authInner()}
+  <button class="btn" style="width:100%;margin-top:6px;background:none;color:var(--muted)" onclick="later()">Позже</button></div>`);
+}
+function refreshAuth(){if(inModal())regModal();else render()}
+function later(){try{sessionStorage.setItem('pred_later','1')}catch(e){}closeModal()}
+function maybeAskReg(r){
+  if(S.me||['cabinet','smi','smi-register','admin'].includes(r))return;
+  let skip=false;try{skip=sessionStorage.getItem('pred_later')==='1'}catch(e){}
+  if(skip||$('#modal').classList.contains('open'))return;
+  regMode=true;setTimeout(()=>{if(!S.me&&!$('#modal').classList.contains('open'))regModal()},700);
+}
+function authInner(){return `
+      <div id="st1">
+      ${regMode?`<label for="rgf">Фамилия, имя, отчество</label><input id="rgf" autocomplete="name" placeholder="Иванова Валентина Петровна" value="${esc(pendingFio)}">
+      <label for="rgb">Дата рождения</label><input id="rgb" type="date" value="${esc(pendingBirth)}" max="${today()}">`:''}
+      <label for="ph">Номер телефона</label><input id="ph" type="tel" inputmode="tel" placeholder="+7 900 000-00-00" value="${esc(pendingPhone)}">
+      ${regMode?`<label class="switch" style="margin-top:14px;font-weight:400"><input type="checkbox" id="rgok"> Согласен(на) на обработку персональных данных</label>
+      <button class="btn b-amber" style="width:100%;margin-top:12px" onclick="demoFill()">Заполнить тестовыми данными</button>`
+      :`<div class="demo" style="margin-top:10px">Тестовый вход: <b>+7 900 111-22-33</b> (Иванова Валентина Петровна) <a href="javascript:void 0" onclick="$('#ph').value='+7 900 111-22-33'">вставить</a></div>`}
+      <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="sendCode()">${regMode?'Зарегистрироваться':'Получить код'}</button>
+      <p style="text-align:center;margin-bottom:0"><a href="javascript:void 0" onclick="regMode=!regMode;refreshAuth()">${regMode?'Уже регистрировались? Войти':'Нет кабинета? Зарегистрироваться'}</a></p></div>
+      <div id="st2" class="hide"><label for="cd">Код из СМС</label><input id="cd" inputmode="numeric" maxlength="4" placeholder="••••" style="font-size:1.6rem;letter-spacing:.5em;text-align:center">
+      <div class="demo" id="democode" style="margin-top:10px"></div>
+      <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="checkCode()">Войти</button></div>`;}
+R.cabinet=()=>{
+  if(!S.me) return `<div style="max-width:560px"><h1>${regMode?'Регистрация':'Вход в кабинет'}</h1><p class="lead">${regMode?'Заполните три поля — и каждый день вам будет приходить предупреждение о мошенниках.':'Введите номер телефона, с которым регистрировались. Мы пришлём код в СМС.'}</p>
+    <div class="card">${authInner()}
+    </div></div>`;
+  const m=S.me;
+  const fav=(m.fav||[]).map(id=>S.news.find(n=>n.id===id)||S.memos.find(x=>x.id===id)).filter(Boolean);
+  return `<h1>Здравствуйте${m.name?', '+esc(firstName(m.name)):''}!</h1>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <h3>Мои данные</h3>
+      <label for="cn">Фамилия, имя, отчество</label><input id="cn" value="${esc(m.name||'')}">
+      <label>Телефон</label><input value="${esc(m.phone)}" disabled>
+      <div class="grid g2"><div><label for="cy">Дата рождения</label><input id="cy" type="date" value="${esc(m.birth||'')}" max="${today()}"></div>
+      <div><label for="cdst">Район</label><select id="cdst">${DISTRICTS.map(d=>`<option ${m.district===d?'selected':''}>${d}</option>`).join('')}</select></div></div>
+      <button class="btn b-navy" style="margin-top:16px" onclick="saveMe()">Сохранить</button>
+    </div>
+    <div class="card">
+      <h3>🔔 Ежедневное уведомление</h3>
+      <label class="switch"><input type="checkbox" id="cpush" ${m.push?'checked':''}> Присылать предупреждение каждый день</label>
+      <label for="ctime">Во сколько присылать</label>
+      <select id="ctime">${['09:00','10:00','12:00','15:00','18:00','20:00'].map(t=>`<option ${m.time===t?'selected':''}>${t}</option>`).join('')}</select>
+      <label class="switch" style="margin-top:14px"><input type="checkbox" id="csms" ${m.sms?'checked':''}> Дублировать по СМС (для кнопочного телефона)</label>
+      <div class="row" style="margin-top:16px"><button class="btn b-navy" onclick="savePush()">Сохранить</button><button class="btn b-ghost" onclick="sendTodayPush()">Проверить уведомление</button></div>
+    </div>
+  </div>
+  <h2>Сохранённое</h2>
+  ${fav.length?`<div class="news">${fav.map(x=>x.cat?newsItem(x):memoCard(x)).join('')}</div>`:'<p class="muted">Пока пусто. Нажмите «☆ Сохранить» под новостью.</p>'}
+  <p style="margin-top:30px"><button class="btn b-ghost" onclick="logout()">Выйти</button> <button class="btn" style="color:var(--red);background:none" onclick="unsub()">Отписаться от рассылки</button></p>`;
+};
+function sendCode(){const p=$('#ph').value.trim();if(p.replace(/\D/g,'').length<10){toast('Введите номер полностью');return}
+  const known=S.subs.find(s=>normPh(s.phone)===normPh(p));
+  if(regMode){
+    const f=$('#rgf').value.trim().replace(/\s+/g,' '),b=$('#rgb').value;
+    if(f.split(' ').length<2){toast('Укажите фамилию и имя полностью');return}
+    if(!b){toast('Укажите дату рождения');return}
+    if(!$('#rgok').checked){toast('Нужно согласие на обработку данных');return}
+    if(known){toast('Этот номер уже зарегистрирован — войдите');regMode=false;pendingPhone=p;refreshAuth();return}
+    pendingFio=f;pendingBirth=b;
+  } else if(!known){toast('Номер не найден — зарегистрируйтесь');regMode=true;pendingPhone=p;refreshAuth();return}
+  pendingPhone=p;pendingCode=String(Math.floor(1000+Math.random()*9000));$('#st1').classList.add('hide');$('#st2').classList.remove('hide');$('#democode').textContent='Тестовый режим: СМС не отправляется, код '+pendingCode+' уже подставлен — нажмите «Войти».';$('#cd').value=pendingCode;$('#cd').focus()}
+function demoFill(){$('#rgf').value='Смирнова Людмила Алексеевна';$('#rgb').value='1950-05-14';$('#ph').value='+7 900 555-44-33';$('#rgok').checked=true;toast('Тестовые данные вставлены — нажмите «Зарегистрироваться»')}
+function checkCode(){if($('#cd').value.trim()!==pendingCode){toast('Неверный код');return}
+  let sub=S.subs.find(s=>normPh(s.phone)===normPh(pendingPhone));
+  if(!sub){sub={id:uid(),phone:pendingPhone,name:pendingFio,birth:pendingBirth,date:today(),push:true,time:'10:00',district:'Центральный',fav:[]};S.subs.push(sub)}
+  S.me=sub;save();closeModal();toast('Вы вошли и подписаны на предупреждения');enablePush().then(ok=>{if(ok){S.me.push=true;save()}});render()}
+function saveMe(){const f=$('#cn').value.trim();if(f.split(/\s+/).length<2||!$('#cy').value){toast('ФИО и дата рождения обязательны');return}Object.assign(S.me,{name:f,birth:$('#cy').value,district:$('#cdst').value});sync();toast('Данные сохранены');render()}
+async function savePush(){const on=$('#cpush').checked;if(on&&!(await enablePush())){}S.me.push=on;S.me.time=$('#ctime').value;S.me.sms=$('#csms').checked;sync();toast(on?'Уведомление будет приходить в '+S.me.time:'Уведомления выключены')}
+function sync(){const i=S.subs.findIndex(s=>s.id===S.me.id);if(i>-1)S.subs[i]=S.me;save()}
+function logout(){S.me=null;save();render()}
+function unsub(){if(!confirm('Отписаться от ежедневных предупреждений?'))return;S.subs=S.subs.filter(s=>s.id!==S.me.id);S.me=null;save();toast('Вы отписаны');render()}
+
+/* ---------- ПОРТАЛ СМИ ---------- */
+const regUrl=()=>location.origin+location.pathname+'#smi-register';
+R.smi=()=>{
+  if(!S.smiMe) return `<div class="grid g2" style="align-items:start">
+    <div><h1>Кабинет СМИ</h1><p class="lead">Для редакций Новороссийска: публикуйте новости о мошенниках, схемы обмана и памятки для жителей.</p>
+      <div class="card"><h3>Вход</h3>
+        <label for="sph">Логин</label><input id="sph" autocomplete="username" value="ivanova">
+        <label for="sp">Пароль</label><input id="sp" type="password" autocomplete="current-password" value="nvr2026">
+        <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="smiLogin()">Войти</button>
+        <p class="demo" style="margin-top:12px">Логин и пароль выдаёт пресс-служба УМВД. Тестовый вход уже подставлен: <b>ivanova</b> / <b>nvr2026</b></p>
+      </div></div>
+    <div class="card" style="text-align:center">
+      <h3>Впервые? Отсканируйте QR</h3>
+      <p class="muted small">Наведите камеру телефона — откроется анкета сотрудника СМИ: ФИО, дата рождения, издание, удостоверение.</p>
+      <div class="qr" id="qrbox"></div>
+      <p><a href="#smi-register">Или заполните анкету здесь →</a></p>
+    </div></div>`;
+  const u=S.smiMe;
+  const mine=[...S.news.map(x=>({...x,k:'Новость'})),...S.memos.map(x=>({...x,k:'Памятка'})),...S.schemes.filter(x=>x.author).map(x=>({...x,k:'Схема'}))].filter(x=>x.authorId===u.id);
+  return `<div class="row" style="justify-content:space-between"><div><h1 style="margin-bottom:0">Кабинет СМИ</h1><p class="muted" style="margin-top:4px">${esc(u.fio)} · ${esc(u.media)}</p></div><button class="btn b-ghost" onclick="S.smiMe=null;save();render()">Выйти</button></div>
+  <div class="grid g2" style="align-items:start;margin-top:10px">
+  <div class="card">
+    <h3>Новый материал</h3>
+    <label for="mt">Что публикуем</label>
+    <select id="mt" onchange="smiType()"><option value="news">Новость о мошенничестве</option><option value="memo">Памятка для жителей</option><option value="scheme">Схема в архив</option></select>
+    <label for="mtitle">Заголовок</label><input id="mtitle" placeholder="Коротко и понятно: что случилось">
+    <div id="fcat"><label for="mcat">Тип мошенничества</label><select id="mcat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div>
+    <div id="ftext"><label for="mtext">Текст</label><textarea id="mtext" placeholder="Что произошло, как обманули и что делать жителям. Пишите простыми словами, крупными абзацами."></textarea></div>
+    <div id="fsch" class="hide"><label for="msign">Как узнать мошенника</label><textarea id="msign" style="min-height:110px"></textarea><label for="mtodo">Что делать</label><textarea id="mtodo" style="min-height:110px"></textarea></div>
+    <div id="fimg"><label for="mimg">Фото (необязательно)</label><input id="mimg" type="file" accept="image/*"></div>
+    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg"> Срочно — отправить push всем подписчикам</label>
+    <button class="btn big b-red" style="width:100%;margin-top:16px" onclick="smiSubmit()">Отправить на проверку</button>
+    <p class="small muted">Материал появится на сайте после проверки пресс-службой УМВД.</p>
+  </div>
+  <div><div class="card"><h3>Мои материалы</h3>
+    ${mine.length?`<table><tr><th>Материал</th><th>Статус</th><th>Просмотры</th></tr>${mine.map(x=>`<tr><td><span class="tag">${x.k}</span><br>${esc(x.title)}</td><td>${x.status==='pub'?'<span class="tag green">Опубликовано</span>':'<span class="tag amber">На проверке</span>'}</td><td>${x.views||0}</td></tr>`).join('')}</table>`:'<p class="muted">Вы ещё ничего не публиковали.</p>'}
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Подсказка для редакции</h3><p class="small muted" style="margin:0">Аудитория — пожилые люди. Заголовок до 12 слов. В конце каждого текста — что делать и номер 102. Без пугающих фото.</p></div></div>
+  </div>`;
+};
+function smiType(){const t=$('#mt').value;$('#ftext').classList.toggle('hide',t==='scheme');$('#fsch').classList.toggle('hide',t!=='scheme');$('#fcat').classList.toggle('hide',t==='memo');$('#furg').classList.toggle('hide',t!=='news');$('#fimg').classList.toggle('hide',t!=='news')}
+function smiLogin(){
+  const u=S.smiUsers.find(x=>x.login===$('#sph').value.trim());
+  if(!u||u.pass!==$('#sp').value){toast('Неверный логин или пароль');return}
+  if(u.status==='blocked'){toast('Доступ закрыт. Обратитесь в пресс-службу УМВД');return}
+  S.smiMe=u;save();render();
+}
+function smiSubmit(){
+  const u=S.smiMe,t=$('#mt').value,title=$('#mtitle').value.trim();
+  if(!title){toast('Добавьте заголовок');return}
+  const base={id:uid(),title,author:u.media,authorId:u.id,date:today(),status:u.noMod?'pub':'mod',views:0,shares:0};
+  const done=img=>{
+    if(t==='news'){const text=$('#mtext').value.trim();if(!text){toast('Добавьте текст');return}S.news.push({...base,type:'news',cat:$('#mcat').value,text,urgent:$('#murg').checked,img})}
+    else if(t==='memo'){const text=$('#mtext').value.trim();if(!text){toast('Добавьте текст');return}S.memos.push({...base,text})}
+    else{S.schemes.push({...base,cat:$('#mcat').value,sign:$('#msign').value.trim(),todo:$('#mtodo').value.trim()})}
+    save();toast('Отправлено на проверку');render();
+  };
+  const f=$('#mimg').files[0];
+  if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
+}
+R['smi-register']=()=>`<div style="max-width:620px"><a href="#smi">← Кабинет СМИ</a><h1>Анкета сотрудника СМИ</h1><p class="lead">После проверки пресс-служба УМВД откроет вам доступ к публикациям.</p>
+  <div class="card">
+    <label for="rf">ФИО</label><input id="rf" placeholder="Фамилия Имя Отчество" autocomplete="name">
+    <label for="rb">Дата рождения</label><input id="rb" type="date">
+    <label for="rm">Издание / редакция</label><input id="rm" placeholder="Например, «Новороссийский рабочий»">
+    <label for="rpos">Должность</label><input id="rpos" placeholder="Корреспондент, редактор…">
+    <label for="rc">Номер редакционного удостоверения</label><input id="rc">
+    <label for="rp">Телефон</label><input id="rp" type="tel" inputmode="tel" placeholder="+7 900 000-00-00">
+    <label for="re">Электронная почта</label><input id="re" type="email">
+    <label class="switch" style="margin-top:16px;font-weight:400"><input type="checkbox" id="ragree"> Согласен(на) на обработку персональных данных</label>
+    <button class="btn big b-navy" style="width:100%;margin-top:16px" onclick="smiRegister()">Отправить анкету</button>
+  </div></div>`;
+function smiRegister(){
+  const v=id=>$('#'+id).value.trim();
+  if(!v('rf')||!v('rb')||!v('rm')||v('rp').replace(/\D/g,'').length<10){toast('Заполните ФИО, дату рождения, издание и телефон');return}
+  if(!$('#ragree').checked){toast('Нужно согласие на обработку данных');return}
+  S.smiUsers.push({id:uid(),fio:v('rf'),birth:v('rb'),media:v('rm'),pos:v('rpos'),cert:v('rc'),phone:v('rp'),email:v('re'),status:'wait',date:today()});
+  save();openModal('<h2>Анкета отправлена</h2><p>Пресс-служба УМВД проверит данные и пришлёт логин и пароль на ваш телефон.</p><button class="btn b-navy" onclick="closeModal();location.hash=\'smi\'">Понятно</button>');
+}
+
+/* ---------- ПАНЕЛЬ МВД ---------- */
+let atab='stat', editRef=null, matFilter='all', subQ='';
+const ADMIN_LOGIN='admin', ADMIN_AUTHOR='УМВД по г. Новороссийску';
+const TILEBG={schemes:'#eef2f7',help:'var(--red-soft)',share:'var(--green-soft)',memos:'var(--amber-soft)',news:'#eef2f7'};
+R.admin=()=>{
+  if(!S.isAdmin) return `<div style="max-width:480px"><h1>Панель управления</h1><p class="lead">Пресс-служба УМВД России по г. Новороссийску</p>
+    <div class="card"><label for="al">Логин</label><input id="al" value="${ADMIN_LOGIN}" autocomplete="username"><label for="ap">Пароль</label><input id="ap" type="password" value="${ADMIN_PASS}" autocomplete="current-password">
+    <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="adminLogin()">Войти</button>
+    <p class="demo" style="margin-top:12px">Тестовый вход уже подставлен: <b>${ADMIN_LOGIN}</b> / <b>${ADMIN_PASS}</b></p></div></div>`;
+  const modN=[...S.news,...S.memos,...S.schemes].filter(x=>x.status==='mod').length;
+  const waitU=S.smiUsers.filter(u=>u.status==='wait').length;
+  const T=[['stat','📊','Статистика и отчёты'],['mat','📰','Новости и материалы'],['mod','✅','Проверка',modN],['acc','👥','Учётные записи',waitU],['sec','🧩','Разделы сайта'],['subs','📱','Подписчики'],['push','🔔','Рассылка']];
+  return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1 style="margin:0">Панель управления</h1><p class="muted small" style="margin:2px 0 0">Пресс-служба УМВД России по г. Новороссийску · администратор</p></div><button class="btn b-ghost" onclick="S.isAdmin=false;save();render()">Выйти</button></div>
+  <div class="adm"><nav class="aside">${T.map(([k,i,v,n])=>`<button class="${atab===k?'on':''}" onclick="atab='${k}';editRef=null;render()"><span>${i}</span>${v}${n?`<em>${n}</em>`:''}</button>`).join('')}</nav><section>${A[atab]()}</section></div>`;
+};
+function adminLogin(){if($('#al').value.trim()===ADMIN_LOGIN&&$('#ap').value===ADMIN_PASS){S.isAdmin=true;save();render()}else toast('Неверный логин или пароль')}
+const A={};
+function bars(obj,suffix=''){const max=Math.max(1,...Object.values(obj));return `<div class="bars">${Object.entries(obj).map(([k,v])=>`<div class="bar"><span>${k}</span><span class="t"><i style="width:${Math.max(3,v/max*100)}%"></i></span><b>${v.toLocaleString('ru-RU')}${suffix}</b></div>`).join('')}</div>`}
+const isPub=x=>!x.status||x.status==='pub';
+const KIND={news:'Новость',memo:'Памятка',scheme:'Схема'};
+const arrOf=k=>k==='news'?S.news:k==='memo'?S.memos:S.schemes;
+const allMat=()=>[...S.news.map(x=>({...x,k:'news'})),...S.memos.map(x=>({...x,k:'memo'})),...S.schemes.map(x=>({...x,k:'scheme'}))];
+function statusTag(s){return s==='mod'?'<span class="tag amber">На проверке</span>':s==='hidden'?'<span class="tag">Скрыто</span>':'<span class="tag green">На сайте</span>'}
+
+/* ---- данные для статистики и отчётов ---- */
+function statData(){
+  const st=S.stat;
+  const dist={...st.dist};S.subs.forEach(s=>dist[s.district||'Центральный']=(dist[s.district||'Центральный']||0)+1);
+  const days=st.days.slice();days[6]+=S.subs.filter(s=>s.date===today()).length;
+  const dl=[6,5,4,3,2,1,0].map(i=>new Date(Date.now()-i*864e5).toLocaleDateString('ru-RU',{weekday:'short',day:'numeric'}));
+  const ch={'MAX':st.channels.max||0,'Telegram':st.channels.tg||0,'Почта':st.channels.mail||0,'СМС':st.channels.sms||0,'Копия ссылки':st.channels.copy||0};
+  const authors={};allMat().forEach(x=>{const a=x.author||ADMIN_AUTHOR;authors[a]=authors[a]||{n:0,v:0,s:0};authors[a].n++;authors[a].v+=x.views||0;authors[a].s+=x.shares||0});
+  return {subs:totalSubs(),today:days[6],open:Math.round(st.push.opened/st.push.sent*100),sent:st.push.sent,
+    views:S.news.reduce((a,n)=>a+(n.views||0),0),shares:Object.values(ch).reduce((a,b)=>a+b,0),
+    dist,ages:st.ages,ch,week:Object.fromEntries(dl.map((d,i)=>[d,days[i]])),
+    news:S.news.filter(isPub).slice().sort((a,b)=>(b.views||0)-(a.views||0)),authors,
+    counts:{news:S.news.filter(isPub).length,memo:S.memos.filter(isPub).length,scheme:S.schemes.filter(isPub).length,smi:S.smiUsers.filter(u=>u.status==='ok').length}};
+}
+function csv(rows){return '﻿'+rows.map(r=>r.map(c=>{c=String(c??'');return /[;"\n\r]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(';')).join('\r\n')}
+function download(name,text){const b=new Blob([text],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);toast('Файл скачан: '+name)}
+function exportReport(){
+  const d=statData();
+  const rows=[['Отчёт: Предупреждён — Новороссийск'],['Сформирован',new Date().toLocaleString('ru-RU')],[],
+    ['ОСНОВНЫЕ ПОКАЗАТЕЛИ','Значение'],['Подписчиков всего',d.subs],['Новых за сегодня',d.today],['Отправлено push-уведомлений',d.sent],['Открывают push, %',d.open],['Просмотров новостей',d.views],['Переслали близким, раз',d.shares],
+    ['Опубликовано новостей',d.counts.news],['Памяток',d.counts.memo],['Схем в архиве',d.counts.scheme],['Авторов СМИ с доступом',d.counts.smi],[],
+    ['НОВЫЕ ПОДПИСЧИКИ ЗА НЕДЕЛЮ','Человек'],...Object.entries(d.week),[],
+    ['ПО РАЙОНАМ','Подписчиков'],...Object.entries(d.dist),[],
+    ['ВОЗРАСТ','% подписчиков'],...Object.entries(d.ages),[],
+    ['КУДА ПЕРЕСЫЛАЮТ','Раз'],...Object.entries(d.ch),[],
+    ['НОВОСТИ','Автор','Дата','Просмотры','Переслали'],...d.news.map(n=>[n.title,n.author,new Date(n.date).toLocaleDateString('ru-RU'),n.views||0,n.shares||0]),[],
+    ['АВТОРЫ','Материалов','Просмотров','Переслали'],...Object.entries(d.authors).map(([a,v])=>[a,v.n,v.v,v.s])];
+  download('otchet-'+today()+'.csv',csv(rows));
+}
+function exportSubs(){
+  download('podpischiki-'+today()+'.csv',csv([['ФИО','Дата рождения','Возраст','Телефон','Район','Уведомление','СМС','Дата регистрации'],
+    ...S.subs.map(s=>[s.name,s.birth?new Date(s.birth).toLocaleDateString('ru-RU'):'',ageOf(s.birth),s.phone,s.district,s.push?s.time:'выкл',s.sms?'да':'нет',new Date(s.date).toLocaleDateString('ru-RU')])]));
+}
+function exportAccounts(){
+  download('avtory-smi-'+today()+'.csv',csv([['ФИО','Издание','Должность','Телефон','Почта','Логин','Статус','Материалов'],
+    ...S.smiUsers.map(u=>[u.fio,u.media,u.pos,u.phone,u.email,u.login,{ok:'активен',wait:'анкета',blocked:'заблокирован'}[u.status],allMat().filter(x=>x.authorId===u.id).length])]));
+}
+function printReport(){
+  const d=statData();const tb=(h,o,s='')=>`<h3>${h}</h3><table>${Object.entries(o).map(([k,v])=>`<tr><td>${k}</td><td>${(+v).toLocaleString('ru-RU')}${s}</td></tr>`).join('')}</table>`;
+  const w=window.open('','_blank');if(!w){toast('Разрешите всплывающие окна');return}
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Отчёт ${today()}</title><style>body{font:14px/1.45 Arial,sans-serif;color:#14202e;max-width:800px;margin:30px auto;padding:0 20px}h1{font-size:22px;margin:0}h3{margin:22px 0 6px;font-size:15px;color:#0e2a47}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #ddd;padding:6px 4px;text-align:left}td:last-child{text-align:right}.k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.k div{border:1px solid #ddd;border-radius:8px;padding:10px}.k b{display:block;font-size:22px}</style>
+  <h1>Отчёт: Предупреждён — Новороссийск</h1><p>Пресс-служба УМВД России по г. Новороссийску · сформирован ${new Date().toLocaleString('ru-RU')}</p>
+  <div class="k"><div>Подписчиков<b>${d.subs.toLocaleString('ru-RU')}</b></div><div>Открывают push<b>${d.open}%</b></div><div>Переслали близким<b>${d.shares.toLocaleString('ru-RU')}</b></div><div>Просмотров новостей<b>${d.views.toLocaleString('ru-RU')}</b></div><div>Новостей<b>${d.counts.news}</b></div><div>Авторов СМИ<b>${d.counts.smi}</b></div></div>
+  ${tb('Новые подписчики за неделю',d.week)}${tb('По районам',d.dist)}${tb('Возраст подписчиков',d.ages,'%')}${tb('Куда пересылают',d.ch)}
+  <h3>Новости</h3><table><tr><th>Новость</th><th>Автор</th><th>Просмотры</th></tr>${d.news.map(n=>`<tr><td>${esc(n.title)}</td><td>${esc(n.author)}</td><td>${(n.views||0).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),400);
+}
+
+A.stat=()=>{
+  const d=statData();
+  return `<div class="card" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">Отчёты</h3><p class="small muted" style="margin:2px 0 0">Файлы открываются в Excel. Отчёт для печати можно сохранить в PDF.</p></div>
+    <div class="row"><button class="btn b-navy" onclick="exportReport()">⬇ Полный отчёт (Excel)</button><button class="btn b-ghost" onclick="exportSubs()">⬇ Подписчики</button><button class="btn b-ghost" onclick="printReport()">🖨 Печать / PDF</button></div></div></div>
+  <div class="grid g4">
+    <div class="card kpi"><span class="muted small">Подписчиков</span><b>${d.subs.toLocaleString('ru-RU')}</b><span class="small" style="color:var(--green)">+${d.today} сегодня</span></div>
+    <div class="card kpi"><span class="muted small">Открывают push</span><b>${d.open}%</b><span class="small muted">${d.sent.toLocaleString('ru-RU')} отправлено</span></div>
+    <div class="card kpi"><span class="muted small">Просмотров новостей</span><b>${d.views.toLocaleString('ru-RU')}</b><span class="small muted">за всё время</span></div>
+    <div class="card kpi"><span class="muted small">Переслали близким</span><b>${d.shares.toLocaleString('ru-RU')}</b><span class="small muted">раз</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Новые подписчики за неделю</h3>${bars(d.week)}</div>
+    <div class="card"><h3>Возраст подписчиков, %</h3>${bars(d.ages,'%')}</div>
+    <div class="card"><h3>По районам города</h3>${bars(d.dist)}</div>
+    <div class="card"><h3>Куда пересылают</h3>${bars(d.ch)}</div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Самые читаемые новости</h3><table><tr><th>Новость</th><th>Автор</th><th>Просмотры</th><th>Переслали</th></tr>${d.news.slice(0,8).map(n=>`<tr><td>${esc(n.title)}</td><td>${esc(n.author)}</td><td>${(n.views||0).toLocaleString('ru-RU')}</td><td>${n.shares||0}</td></tr>`).join('')}</table></div>
+  <div class="card" style="margin-top:16px"><h3>Авторы</h3><table><tr><th>Автор</th><th>Материалов</th><th>Просмотров</th><th>Переслали</th></tr>${Object.entries(d.authors).map(([a,v])=>`<tr><td>${esc(a)}</td><td>${v.n}</td><td>${v.v.toLocaleString('ru-RU')}</td><td>${v.s}</td></tr>`).join('')}</table></div>
+  <p class="demo" style="margin-top:16px">Часть цифр — демо для показа. На сервере Amvera статистика будет считаться по реальным посещениям.</p>`;
+};
+
+/* ---- новости и материалы ---- */
+A.mat=()=>{
+  const list=allMat().filter(x=>matFilter==='all'||x.k===matFilter).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const e=editRef?arrOf(editRef.k).find(x=>x.id===editRef.id):null;const k=editRef?editRef.k:'news';
+  const opt=(v,t)=>`<option value="${v}" ${k===v?'selected':''}>${t}</option>`;
+  return `<div class="grid g2" style="align-items:start">
+  <div class="card" id="matform"><h3>${e?'✏️ Редактирование':'➕ Новый материал'}</h3>
+    <label for="mt">Что публикуем</label><select id="mt" onchange="smiType()" ${e?'disabled':''}>${opt('news','Новость')}${opt('memo','Памятка')}${opt('scheme','Схема в архив')}</select>
+    <label for="mtitle">Заголовок</label><input id="mtitle" value="${esc(e?.title||'')}" placeholder="Коротко и понятно">
+    <div id="fcat"><label for="mcat">Тип мошенничества</label><select id="mcat">${Object.entries(CATS).map(([c,v])=>`<option value="${c}" ${e?.cat===c?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div id="ftext"><label for="mtext">Текст</label><textarea id="mtext" placeholder="Что произошло и что делать жителям">${esc(e?.text||'')}</textarea></div>
+    <div id="fsch" class="hide"><label for="msign">Как узнать мошенника</label><textarea id="msign" style="min-height:100px">${esc(e?.sign||'')}</textarea><label for="mtodo">Что делать</label><textarea id="mtodo" style="min-height:100px">${esc(e?.todo||'')}</textarea></div>
+    <div id="fimg"><label for="mimg">Фото (необязательно)</label><input id="mimg" type="file" accept="image/*"></div>
+    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg" ${e?.urgent?'checked':''}> Срочно — push всем подписчикам</label>
+    <div class="row" style="margin-top:16px"><button class="btn b-red" onclick="adminSave()">${e?'Сохранить изменения':'Опубликовать'}</button>${e?'<button class="btn b-ghost" onclick="editRef=null;render()">Отмена</button>':''}</div>
+  </div>
+  <div class="card"><h3>Все материалы</h3>
+    <div class="chips">${[['all','Все'],['news','Новости'],['memo','Памятки'],['scheme','Схемы']].map(([v,t])=>`<button class="chip ${matFilter===v?'on':''}" onclick="matFilter='${v}';render()">${t}</button>`).join('')}</div>
+    <table><tr><th>Материал</th><th>Статус</th><th>👁</th><th>Действия</th></tr>${list.map(x=>`<tr><td><span class="tag">${KIND[x.k]}</span> ${esc(x.title)}<br><span class="small muted">${esc(x.author||ADMIN_AUTHOR)}${x.date?' · '+fmtD(x.date):''}</span></td><td>${statusTag(x.status)}</td><td>${x.views||0}</td>
+      <td class="acts"><button onclick="editRef={k:'${x.k}',id:'${x.id}'};render()">✏️ Изменить</button><button onclick="toggleHide('${x.k}','${x.id}')">${x.status==='hidden'?'👁 Показать':'🙈 Скрыть'}</button><button onclick="delMat('${x.k}','${x.id}')">🗑</button></td></tr>`).join('')}</table>
+  </div></div>`;
+};
+function adminSave(){
+  const t=editRef?editRef.k:$('#mt').value,title=$('#mtitle').value.trim();
+  if(!title){toast('Добавьте заголовок');return}
+  const fields={title};
+  if(t!=='memo')fields.cat=$('#mcat').value;
+  if(t==='scheme'){fields.sign=$('#msign').value.trim();fields.todo=$('#mtodo').value.trim();if(!fields.sign){toast('Заполните «Как узнать»');return}}
+  else{fields.text=$('#mtext').value.trim();if(!fields.text){toast('Добавьте текст');return}}
+  if(t==='news')fields.urgent=$('#murg').checked;
+  const done=img=>{
+    if(img)fields.img=img;
+    if(editRef){Object.assign(arrOf(t).find(x=>x.id===editRef.id),fields);editRef=null;toast('Изменения сохранены')}
+    else{arrOf(t).push({id:uid(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано на сайте');if(fields.urgent){S.stat.push.sent+=totalSubs();sendTodayPush()}}
+    save();render();
+  };
+  const f=$('#mimg')&&$('#mimg').files[0];
+  if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
+}
+function toggleHide(k,id){const x=arrOf(k).find(i=>i.id===id);x.status=x.status==='hidden'?'pub':'hidden';save();toast(x.status==='hidden'?'Скрыто с сайта':'Снова на сайте');render()}
+function delMat(k,id){if(!confirm('Удалить материал без возможности восстановления?'))return;const a=arrOf(k);a.splice(a.findIndex(i=>i.id===id),1);save();toast('Удалено');render()}
+
+/* ---- проверка ---- */
+A.mod=()=>{
+  const q=allMat().filter(x=>x.status==='mod');
+  if(!q.length)return '<div class="card"><h3>Проверка материалов</h3><p class="muted" style="margin:0">Новых материалов от СМИ нет. Как только автор отправит новость, она появится здесь.</p></div>';
+  return `<div class="grid">${q.map(x=>`<div class="card"><div class="meta"><span class="tag">${KIND[x.k]}</span>${x.urgent?'<span class="tag red">Срочно + push</span>':''}<span>${esc(x.author)}</span><span>${fmtD(x.date)}</span></div>
+   <h3 style="margin-top:8px">${esc(x.title)}</h3>${x.text?para(x.text):`<p><b>Как узнать:</b> ${esc(x.sign)}</p><p><b>Что делать:</b> ${esc(x.todo)}</p>`}
+   <div class="row"><button class="btn b-navy" onclick="moderate('${x.k}','${x.id}',1)">Опубликовать</button><button class="btn b-ghost" onclick="atab='mat';editRef={k:'${x.k}',id:'${x.id}'};render()">Исправить</button><button class="btn b-ghost" onclick="moderate('${x.k}','${x.id}',0)">Отклонить</button></div></div>`).join('')}</div>`;
+};
+function moderate(k,id,ok){const arr=arrOf(k);const i=arr.findIndex(x=>x.id===id);if(i<0)return;
+  if(ok){arr[i].status='pub';if(arr[i].urgent){S.stat.push.sent+=totalSubs();sendTodayPush()}toast('Опубликовано')}else{arr.splice(i,1);toast('Отклонено')}save();render()}
+
+/* ---- учётные записи ---- */
+function genPass(){const a='abcdefghjkmnpqrstuvwxyz23456789';let p='';for(let i=0;i<8;i++)p+=a[Math.floor(Math.random()*a.length)];return p}
+function translit(s){const m={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};return String(s).toLowerCase().split('').map(c=>m[c]??(/[a-z0-9]/.test(c)?c:'')).join('')}
+function genLogin(fio){let b=translit(String(fio||'').split(' ')[0])||'smi',l=b,i=2;while(S.smiUsers.some(u=>u.login===l)){l=b+i++}return l}
+function credsModal(u,title){
+  const txt=`Доступ к сайту «Предупреждён — Новороссийск»\nАдрес: ${location.origin+location.pathname}#smi\nЛогин: ${u.login}\nПароль: ${u.pass}`;
+  openModal(`<h2>${title}</h2><p>Передайте сотруднику эти данные. Пароль можно сменить в любой момент.</p>
+  <div class="card" style="font-size:1.05rem"><b>${esc(u.fio)}</b> · ${esc(u.media)}<br>Логин: <b>${esc(u.login)}</b><br>Пароль: <b>${esc(u.pass)}</b></div>
+  <div class="row" style="margin-top:14px"><button class="btn b-navy" id="cpy">📋 Скопировать</button>${u.phone?`<a class="btn b-ghost" href="sms:${u.phone.replace(/[^\d+]/g,'')}?&body=${encodeURIComponent(txt)}">✉ Отправить СМС</a>`:''}</div>`);
+  $('#cpy').onclick=()=>{copy(txt);toast('Скопировано')};
+}
+A.acc=()=>{
+  const wait=S.smiUsers.filter(u=>u.status==='wait');
+  return `${wait.length?`<div class="card" style="margin-bottom:16px;border:2px solid var(--amber)"><h3>📥 Новые анкеты по QR (${wait.length})</h3>${wait.map(u=>`<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding:10px 0"><div><b>${esc(u.fio)}</b> · ${esc(u.media)}<br><span class="small muted">д.р. ${new Date(u.birth).toLocaleDateString('ru-RU')} · ${esc(u.phone)} · удост. ${esc(u.cert||'—')}</span></div><div class="row"><button class="btn b-navy" onclick="approveU('${u.id}')">Одобрить и выдать пароль</button><button class="btn b-ghost" onclick="delU('${u.id}')">Отклонить</button></div></div>`).join('')}</div>`:''}
+  <div class="grid g2" style="align-items:start">
+  <div class="card"><h3>➕ Создать учётную запись автора</h3><p class="small muted" style="margin:0">Для сотрудников СМИ и пресс-службы, которые будут добавлять новости.</p>
+    <label for="nf">ФИО</label><input id="nf" placeholder="Фамилия Имя Отчество" oninput="if(!$('#nl').dataset.t)$('#nl').value=genLogin(this.value)">
+    <label for="nm">Издание / отдел</label><input id="nm" placeholder="«Новороссийск 24»">
+    <label for="npos">Должность</label><input id="npos" placeholder="Редактор">
+    <label for="nph">Телефон</label><input id="nph" type="tel" placeholder="+7 900 000-00-00">
+    <div class="grid g2"><div><label for="nl">Логин</label><input id="nl" oninput="this.dataset.t=1"></div><div><label for="npw">Пароль</label><div class="row" style="flex-wrap:nowrap"><input id="npw" value="${genPass()}"><button class="btn b-ghost" style="padding:0 12px" title="Новый пароль" onclick="$('#npw').value=genPass()">🎲</button></div></div></div>
+    <label class="switch" style="margin-top:12px;font-weight:400"><input type="checkbox" id="nmod" checked> Материалы проходят проверку перед публикацией</label>
+    <button class="btn b-red" style="width:100%;margin-top:14px" onclick="createU()">Создать учётную запись</button>
+  </div>
+  <div class="card" style="text-align:center"><h3>QR для редакций</h3><p class="small muted">Сотрудник сканирует QR и сам заполняет анкету: ФИО, дата рождения, издание. Анкета придёт сюда на одобрение.</p><div class="qr" id="qrbox"></div><br><button class="btn b-ghost" style="margin-top:12px" onclick="window.print()">🖨 Распечатать</button></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Все учётные записи (${S.smiUsers.filter(u=>u.status!=='wait').length})</h3><button class="btn b-ghost" onclick="exportAccounts()">⬇ Скачать список</button></div>
+  <table style="margin-top:10px"><tr><th>ФИО / издание</th><th>Логин</th><th>Статус</th><th>Материалов</th><th>Действия</th></tr>${S.smiUsers.filter(u=>u.status!=='wait').map(u=>`<tr><td><b>${esc(u.fio)}</b><br><span class="small muted">${esc(u.media)}${u.pos?' · '+esc(u.pos):''}<br>${esc(u.phone||'')}</span></td><td><code>${esc(u.login)}</code></td><td>${u.status==='ok'?'<span class="tag green">Активен</span>':'<span class="tag red">Заблокирован</span>'}${u.noMod?'<br><span class="small muted">без проверки</span>':''}</td><td>${allMat().filter(x=>x.authorId===u.id).length}</td>
+    <td class="acts"><button onclick="resetPw('${u.id}')">🔑 Новый пароль</button><button onclick="blockU('${u.id}')">${u.status==='ok'?'⛔ Заблокировать':'✅ Разблокировать'}</button><button onclick="delU('${u.id}')">🗑</button></td></tr>`).join('')}</table></div>`;
+};
+function createU(){
+  const v=id=>$('#'+id).value.trim();
+  if(v('nf').split(/\s+/).length<2||!v('nm')){toast('Укажите ФИО и издание');return}
+  const login=v('nl')||genLogin(v('nf'));if(S.smiUsers.some(u=>u.login===login)){toast('Такой логин уже есть');return}
+  if(v('npw').length<6){toast('Пароль — минимум 6 символов');return}
+  const u={id:uid(),fio:v('nf'),media:v('nm'),pos:v('npos'),phone:v('nph'),login,pass:v('npw'),status:'ok',noMod:!$('#nmod').checked,date:today()};
+  S.smiUsers.push(u);save();render();credsModal(u,'Учётная запись создана');
+}
+function approveU(id){const u=S.smiUsers.find(x=>x.id===id);u.status='ok';u.login=u.login||genLogin(u.fio);u.pass=genPass();save();render();credsModal(u,'Анкета одобрена')}
+function resetPw(id){const u=S.smiUsers.find(x=>x.id===id);u.pass=genPass();save();render();credsModal(u,'Новый пароль')}
+function blockU(id){const u=S.smiUsers.find(x=>x.id===id);u.status=u.status==='ok'?'blocked':'ok';save();toast(u.status==='ok'?'Доступ открыт':'Доступ закрыт');render()}
+function delU(id){if(!confirm('Удалить учётную запись?'))return;S.smiUsers=S.smiUsers.filter(x=>x.id!==id);save();toast('Удалено');render()}
+
+/* ---- разделы ---- */
+A.sec=()=>`<div class="card"><h3>Разделы сайта</h3><p class="small muted" style="margin:0 0 6px">Меняйте названия, описания и порядок. Скрытый раздел пропадает из меню и с главной.</p>
+  ${S.sections.map((s,i)=>`<div class="secrow">
+    <div style="display:grid;gap:6px;align-content:start"><input id="si${i}" value="${esc(s.icon)}" style="text-align:center;font-size:1.4rem;padding:6px"><button class="btn b-ghost" style="min-height:38px;padding:0" onclick="moveSec(${i},-1)" ${i?'':'disabled'}>▲</button><button class="btn b-ghost" style="min-height:38px;padding:0" onclick="moveSec(${i},1)" ${i<S.sections.length-1?'':'disabled'}>▼</button></div>
+    <div><div class="grid g2" style="gap:10px"><div><label for="st${i}" style="margin-top:0">Название раздела</label><input id="st${i}" value="${esc(s.title)}"></div><div><label for="ss${i}" style="margin-top:0">В меню</label><input id="ss${i}" value="${esc(s.short||'')}"></div></div>
+    <label for="sd${i}">Описание</label><textarea id="sd${i}" style="min-height:70px">${esc(s.desc)}</textarea>
+    <div class="row" style="margin-top:10px"><label class="switch" style="margin:0"><input type="checkbox" id="so${i}" ${s.on?'checked':''}> Показывать на сайте</label><label class="switch" style="margin:0"><input type="checkbox" id="sh${i}" ${s.tile?'checked':''}> Плитка на главной</label></div></div>
+  </div>`).join('')}
+  <button class="btn b-red" style="margin-top:16px" onclick="saveSec()">Сохранить разделы</button></div>
+  <div class="card" style="margin-top:16px"><h3>Раздел «${esc(sec('help').title)}» — шаги</h3><p class="small muted" style="margin:0">Каждый шаг с новой строки: <b>Заголовок | Пояснение</b></p>
+  <textarea id="hsteps" style="min-height:220px;margin-top:10px">${esc(S.helpSteps.map(s=>s.join(' | ')).join('\n'))}</textarea>
+  <button class="btn b-navy" style="margin-top:12px" onclick="saveSteps()">Сохранить шаги</button></div>
+  <div class="card" style="margin-top:16px"><h3>Жёлтая строка-предупреждение вверху сайта</h3><input id="alerttx" value="${esc(S.alert)}"><button class="btn b-navy" style="margin-top:12px" onclick="S.alert=$('#alerttx').value.trim();save();buildNav();toast('Сохранено')">Сохранить</button></div>`;
+function readSec(){S.sections.forEach((s,i)=>Object.assign(s,{icon:$('#si'+i).value.trim()||s.icon,title:$('#st'+i).value.trim()||s.title,short:$('#ss'+i).value.trim(),desc:$('#sd'+i).value.trim(),on:$('#so'+i).checked,tile:$('#sh'+i).checked}))}
+function moveSec(i,d){readSec();const a=S.sections;[a[i],a[i+d]]=[a[i+d],a[i]];save();render()}
+function saveSec(){readSec();save();buildNav();toast('Разделы сохранены — проверьте главную')}
+function saveSteps(){S.helpSteps=$('#hsteps').value.split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(x=>x[0]).map(x=>[x[0],x[1]||'']);save();toast('Шаги сохранены')}
+
+/* ---- подписчики ---- */
+A.subs=()=>{
+  const q=subQ.toLowerCase();const list=S.subs.filter(s=>!q||(s.name+s.phone+s.district).toLowerCase().includes(q));
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Подписчики (${S.subs.length})</h3><button class="btn b-navy" onclick="exportSubs()">⬇ Скачать в Excel</button></div>
+  <input id="subq" placeholder="🔎 Поиск по ФИО, телефону, району" value="${esc(subQ)}" style="margin:12px 0" oninput="subQ=this.value;clearTimeout(window._sq);window._sq=setTimeout(()=>{render();const i=$('#subq');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)">
+  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.push?'в '+esc(s.time):'выкл'}${s.sms?' + СМС':''}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
+  <p class="small muted">В статистике дополнительно учтены ${S.stat.base.toLocaleString('ru-RU')} демо-подписчиков.</p></div>`;
+};
+function delSub(id){if(!confirm('Удалить подписчика?'))return;S.subs=S.subs.filter(s=>s.id!==id);if(S.me&&S.me.id===id)S.me=null;save();render()}
+
+/* ---- рассылка ---- */
+A.push=()=>{const n=pubNews()[0];return `<div class="grid g2" style="align-items:start"><div class="card"><h3>Ежедневная рассылка</h3>
+  <p class="muted small">Каждый день подписчик получает одно уведомление в выбранное им время — самую свежую опубликованную новость.</p>
+  <p><b>Сегодня уйдёт:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push в браузере/телефоне + СМС для кнопочных телефонов</p>
+  <button class="btn b-red" onclick="S.stat.push.sent+=totalSubs();save();sendTodayPush();toast('Рассылка отправлена');render()">Отправить сейчас</button></div>
+  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). Для кнопочных телефонов — СМС через оператора. Расписание и учёт открытий — на сервере Amvera.</p></div></div>`};
+
+/* ============ РОУТЕР ============ */
+function render(){
+  const h=(location.hash||'#home').slice(1);const [r,id]=h.split('/');
+  let html;
+  if((r==='news'||r==='memo')&&id) html=articleView(r,id);
+  else if(r==='scheme'&&id){html=R.schemes();setTimeout(()=>openScheme(id),0)}
+  else html=(sec(r)&&!sec(r).on?R.home:(R[r]||R.home))();
+  buildNav();
+  const staff={admin:'Панель управления УМВД',smi:'Кабинет СМИ','smi-register':'Кабинет СМИ'}[r];
+  document.body.classList.toggle('staff',!!staff);$('#stafftag').textContent=staff||'';
+  $('#app').innerHTML=html;
+  document.querySelectorAll('#app table').forEach(t=>{if(!t.parentElement.classList.contains('tw')){const w=document.createElement('div');w.className='tw';t.before(w);w.appendChild(t)}});
+  document.querySelectorAll('.nav a,.mnav a').forEach(a=>a.classList.toggle('on',a.dataset.r===r||(r==='memo'&&a.dataset.r==='memos')));
+  $('#nav').classList.remove('open');
+  after(r);
+}
+function after(r){
+  const qb=$('#qrbox'); if(qb&&window.QRCode){qb.innerHTML='';new QRCode(qb,{text:regUrl(),width:200,height:200,colorDark:'#0e2a47'})}
+  if(r==='news'&&$('#nchips')) $('#nchips').onclick=e=>{const c=e.target.dataset.c;if(c===undefined)return;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));$('#nlist').innerHTML=pubNews().filter(n=>!c||n.cat===c).map(newsItem).join('')||'<p class="muted">Нет новостей в этой категории.</p>'};
+  if(r==='schemes'){let cat='';const draw=()=>{const q=$('#sq').value.toLowerCase();$('#slist').innerHTML=S.schemes.filter(s=>(!s.status||s.status==='pub')&&(!cat||s.cat===cat)&&(!q||(s.title+s.sign+s.todo+CATS[s.cat]).toLowerCase().includes(q))).map(schemeCard).join('')||'<p class="muted">Ничего не найдено.</p>'};
+    $('#schips').onclick=e=>{if(e.target.dataset.c===undefined)return;cat=e.target.dataset.c;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));draw()};$('#sq').oninput=draw;draw()}
+  if(r==='admin'&&atab==='mat'&&$('#mt'))smiType();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',()=>{closeModal();render()});
+$('#burger').onclick=()=>$('#nav').classList.toggle('open');
+let fs=19;try{fs=+localStorage.getItem('pred_fs')||19}catch(e){}
+const applyFs=()=>document.documentElement.style.setProperty('--fs',fs+'px');applyFs();
+$('#fsbtn').onclick=()=>{fs=fs>=25?17:fs+3;applyFs();try{localStorage.setItem('pred_fs',fs)}catch(e){}toast(fs>=25?'Самый крупный шрифт':'Шрифт '+(fs>19?'увеличен':'обычный'))};
+render();
+maybeAskReg((location.hash||'#home').slice(1).split('/')[0]);
+</script>
+</body>
+</html>
