@@ -2,6 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="only light">
+<meta name="supported-color-schemes" content="light">
+<meta name="darkreader-lock">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Предупреждён — Новороссийск</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -14,13 +17,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
+  color-scheme:only light;
   --bg:#f4f9ff; --card:#ffffff; --ink:#0b1220; --muted:#2f3a4a; --line:#d5e2f1;
   --navy:#2257a3; --navy2:#4a86d1; --red:#c0261f; --red-soft:#fdecea; --amber:#f0c03a; --amber-soft:#fff6d9;
   --sky:radial-gradient(ellipse at 50% 30%,#ffffff 0%,#eef5fe 45%,#d9e8fa 100%);
   --green:#1d7a46; --green-soft:#e3f3e9; --r:18px; --fs:19px;
 }
 *{box-sizing:border-box}
-html{font-size:var(--fs)}
+html{font-size:var(--fs);color-scheme:only light;forced-color-adjust:none}
 body{margin:0;background:#3364a6;background-image:radial-gradient(ellipse at 50% 0%,#4f82c6 0%,#3a6bb0 45%,#3364a6 75%,#2d5c9c 100%);background-attachment:fixed;color:var(--ink);font-family:"Golos Text",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 a{color:var(--navy2)}
 button,input,select,textarea{font:inherit;color:inherit}
