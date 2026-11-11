@@ -65,6 +65,15 @@ async function sendAll(n) {
   return { sent, total };
 }
 
+// Раз в 30 секунд: запланированные материалы, время которых пришло, публикуем и рассылаем
+setInterval(async () => {
+  const now = Date.now();
+  for (const n of db.news) if (n.status === 'scheduled' && n.publishAt && Date.parse(n.publishAt) <= now) {
+    n.status = 'pub'; n.ts = Date.parse(n.publishAt); n.date = ymd(new Date(n.publishAt)); save();
+    if (n.type === 'news' || n.text) await sendAll(n);
+  }
+}, 30 * 1000);
+
 /* ---------- API ---------- */
 const app = express();
 app.use(express.json({ limit: '15mb' }));

@@ -217,6 +217,15 @@ body.staff main{padding-bottom:40px}
 .brand{min-width:0}.brand span{min-width:0}
 @media(max-width:420px){.brand{gap:8px}.brand b{font-size:.9rem;white-space:nowrap}.brand img{width:44px!important}.brand small{font-size:.64rem}.top .wrap{gap:8px}}
 @media(max-width:340px){.brand b{font-size:.8rem}}
+.mlist{display:grid;gap:10px}
+.mitem{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;display:grid;gap:6px;min-width:0}
+.mitem .mt{font-size:1rem;line-height:1.3;color:#000;overflow-wrap:anywhere}
+.mitem .meta{gap:6px}
+.mact{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.mact button{border:1px solid var(--line);background:#f4f8fd;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:.82rem;color:var(--ink)}
+.mact button.del{color:var(--red);border-color:#f3c4c1;background:#fff5f4}
+input[type=radio]{width:22px;height:22px;min-height:0}
+@media(max-width:600px){body.staff .brand small{display:none}body.staff .stafftag{display:none!important}body.staff .brand b{font-size:.85rem}}
 .switch{display:flex;align-items:center;gap:12px;font-weight:600}
 .switch input{width:28px;height:28px;min-height:0}
 </style>
@@ -708,7 +717,19 @@ const isPub=x=>!x.status||x.status==='pub';
 const KIND={news:'Новость',memo:'Памятка',scheme:'Схема'};
 const arrOf=k=>k==='news'?S.news:k==='memo'?S.memos:S.schemes;
 const allMat=()=>[...S.news.map(x=>({...x,k:'news'})),...S.memos.map(x=>({...x,k:'memo'})),...S.schemes.map(x=>({...x,k:'scheme'}))];
-function statusTag(s){return s==='mod'?'<span class="tag amber">На проверке</span>':s==='hidden'?'<span class="tag">Скрыто</span>':'<span class="tag green">На сайте</span>'}
+const toLocalInput=iso=>{const d=new Date(iso);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
+const fmtDT=iso=>new Date(iso).toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+function statusTag(s,x){return s==='scheduled'?`<span class="tag amber">⏰ ${x&&x.publishAt?fmtDT(x.publishAt):'Запланировано'}</span>`:s==='mod'?'<span class="tag amber">На проверке</span>':s==='hidden'?'<span class="tag">Скрыто</span>':'<span class="tag green">На сайте</span>'}
+// Запланированные материалы: когда время пришло — публикуем (на сервере это делает сам сервер)
+function promoteScheduled(){
+  if(API.on)return;const now=Date.now();let ch=false;
+  for(const k of ['news','memo','scheme'])for(const x of arrOf(k))if(x.status==='scheduled'&&x.publishAt&&Date.parse(x.publishAt)<=now){
+    x.status='pub';x.date=new Date(x.publishAt).toISOString().slice(0,10);x.ts=Date.parse(x.publishAt);ch=true;
+    if(k==='news')showLocalNotice('⚠ МВД предупреждает',x.title,'./index.html#news/'+x.id);
+  }
+  if(ch){save();render()}
+}
+setInterval(()=>{try{promoteScheduled()}catch(e){}},30000);
 
 /* ---- данные для статистики и отчётов ---- */
 function statData(){
@@ -792,18 +813,28 @@ A.mat=()=>{
     <div id="ftext"><label for="mtext">Текст</label><textarea id="mtext" placeholder="Что произошло и что делать жителям">${esc(e?.text||'')}</textarea></div>
     <div id="fsch" class="hide"><label for="msign">Как узнать мошенника</label><textarea id="msign" style="min-height:100px">${esc(e?.sign||'')}</textarea><label for="mtodo">Что делать</label><textarea id="mtodo" style="min-height:100px">${esc(e?.todo||'')}</textarea></div>
     <div id="fimg"><label for="mimg">Фото (необязательно)</label><input id="mimg" type="file" accept="image/*"></div>
-    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg" ${e?.urgent?'checked':''}> Пометка «Срочно»</label><p class="small muted" style="margin:6px 0 0">Новость сразу придёт уведомлением всем подписчикам.</p>
-    <div class="row" style="margin-top:16px"><button class="btn b-red" onclick="adminSave()">${e?'Сохранить изменения':'Опубликовать'}</button>${e?'<button class="btn b-ghost" onclick="editRef=null;render()">Отмена</button>':''}</div>
+    <label class="switch" style="margin-top:14px" id="furg"><input type="checkbox" id="murg" ${e?.urgent?'checked':''}> Пометка «Срочно»</label>
+    <label>Когда публиковать</label>
+    <div class="row" style="gap:16px"><label class="switch" style="margin:0;font-weight:500"><input type="radio" name="when" value="now" ${e?.status!=='scheduled'?'checked':''} onchange="$('#whenbox').classList.add('hide');$('#pubbtn').textContent=editRef?'Сохранить изменения':'Опубликовать сейчас'"> Сейчас</label>
+    <label class="switch" style="margin:0;font-weight:500"><input type="radio" name="when" value="later" ${e?.status==='scheduled'?'checked':''} onchange="$('#whenbox').classList.remove('hide');$('#pubbtn').textContent='Запланировать'"> Запланировать</label></div>
+    <div id="whenbox" class="${e?.status==='scheduled'?'':'hide'}"><input id="mwhen" type="datetime-local" value="${e?.publishAt?toLocalInput(e.publishAt):''}" min="${toLocalInput(new Date().toISOString())}" style="margin-top:10px;max-width:280px"><p class="small muted" style="margin:6px 0 0">В это время материал появится на сайте, а новость придёт уведомлением всем подписчикам.</p></div>
+    <div class="row" style="margin-top:16px"><button class="btn b-red" id="pubbtn" onclick="adminSave()">${e?(e.status==='scheduled'?'Запланировать':'Сохранить изменения'):'Опубликовать сейчас'}</button>${e?'<button class="btn b-ghost" onclick="editRef=null;render()">Отмена</button>':''}</div>
   </div>
   <div class="card"><h3>Все материалы</h3>
     <div class="chips">${[['all','Все'],['news','Новости'],['memo','Памятки'],['scheme','Схемы']].map(([v,t])=>`<button class="chip ${matFilter===v?'on':''}" onclick="matFilter='${v}';render()">${t}</button>`).join('')}</div>
-    <table><tr><th>Материал</th><th>Статус</th><th>👁</th><th>Действия</th></tr>${list.map(x=>`<tr><td><span class="tag">${KIND[x.k]}</span> ${esc(x.title)}<br><span class="small muted">${esc(x.author||ADMIN_AUTHOR)}${x.date?' · '+fmtD(x.date):''}</span></td><td>${statusTag(x.status)}</td><td>${x.views||0}</td>
-      <td class="acts"><button onclick="editRef={k:'${x.k}',id:'${x.id}'};render()">✏️ Изменить</button><button onclick="toggleHide('${x.k}','${x.id}')">${x.status==='hidden'?'👁 Показать':'🙈 Скрыть'}</button><button onclick="delMat('${x.k}','${x.id}')">🗑</button></td></tr>`).join('')}</table>
+    <div class="mlist">${list.length?list.map(x=>`<div class="mitem">
+      <div class="meta"><span class="tag">${KIND[x.k]}</span>${statusTag(x.status,x)}${x.urgent?'<span class="tag red">Срочно</span>':''}</div>
+      <b class="mt">${esc(x.title)}</b>
+      <div class="small muted">${esc(x.author||ADMIN_AUTHOR)}${x.date&&x.status!=='scheduled'?' · '+fmtD(x.date):''}${x.views?' · 👁 '+x.views:''}</div>
+      <div class="mact"><button onclick="editRef={k:'${x.k}',id:'${x.id}'};render();$('#matform').scrollIntoView({behavior:'smooth'})">✏️ Изменить</button><button onclick="toggleHide('${x.k}','${x.id}')">${x.status==='hidden'?'👁 Показать':'🙈 Скрыть'}</button><button class="del" onclick="delMat('${x.k}','${x.id}')">🗑 Удалить</button></div>
+    </div>`).join(''):'<p class="muted">Пока пусто.</p>'}</div>
   </div></div>`;
 };
 function adminSave(){
   const t=editRef?editRef.k:$('#mt').value,title=$('#mtitle').value.trim();
   if(!title){toast('Добавьте заголовок');return}
+  const later=(document.querySelector('input[name=when]:checked')||{}).value==='later';let publishAt=null;
+  if(later){const v=$('#mwhen').value;if(!v){toast('Выберите дату и время публикации');return}publishAt=new Date(v).toISOString();if(Date.parse(publishAt)<=Date.now()){toast('Время публикации должно быть в будущем');return}}
   const fields={title};
   if(t!=='memo')fields.cat=$('#mcat').value;
   if(t==='scheme'){fields.sign=$('#msign').value.trim();fields.todo=$('#mtodo').value.trim();if(!fields.sign){toast('Заполните «Как узнать»');return}}
@@ -812,15 +843,17 @@ function adminSave(){
   const done=img=>{
     let urgentNew=false;
     if(img)fields.img=img;
-    if(editRef){Object.assign(arrOf(t).find(x=>x.id===editRef.id),fields);editRef=null;toast('Изменения сохранены')}
+    if(later){fields.status='scheduled';fields.publishAt=publishAt}
+    if(editRef){const it=arrOf(t).find(x=>x.id===editRef.id);if(!later&&it.status==='scheduled'){fields.status='pub';fields.publishAt=null;fields.date=today();fields.ts=Date.now();urgentNew=t==='news'}Object.assign(it,fields);editRef=null;toast(later?'Запланировано на '+fmtDT(publishAt):'Изменения сохранены')}
+    else if(later){arrOf(t).push({id:uid(),author:ADMIN_AUTHOR,date:publishAt.slice(0,10),views:0,shares:0,...fields});toast('Запланировано на '+fmtDT(publishAt))}
     else{arrOf(t).push({id:uid(),ts:Date.now(),author:ADMIN_AUTHOR,date:today(),status:'pub',views:0,shares:0,...fields});toast('Опубликовано и отправлено подписчикам');urgentNew=t==='news'}
     save();render();syncNews().then(()=>{if(urgentNew&&!API.on)showLocalNotice('⚠ МВД предупреждает',fields.title,'./index.html#news/'+arrOf('news').slice(-1)[0].id)});
   };
   const f=$('#mimg')&&$('#mimg').files[0];
   if(f&&t==='news'){const r=new FileReader();r.onload=()=>done(r.result);r.readAsDataURL(f)}else done(null);
 }
-function toggleHide(k,id){const x=arrOf(k).find(i=>i.id===id);x.status=x.status==='hidden'?'pub':'hidden';save();syncNews();toast(x.status==='hidden'?'Скрыто с сайта':'Снова на сайте');render()}
-function delMat(k,id){if(!confirm('Удалить материал без возможности восстановления?'))return;const a=arrOf(k);a.splice(a.findIndex(i=>i.id===id),1);save();syncNews();toast('Удалено');render()}
+function toggleHide(k,id){const x=arrOf(k).find(i=>i.id===id);x.status=x.status==='hidden'?(x.publishAt&&Date.parse(x.publishAt)>Date.now()?'scheduled':'pub'):'hidden';save();syncNews();toast(x.status==='hidden'?'Скрыто с сайта':'Снова на сайте');render()}
+function delMat(k,id){const it=arrOf(k).find(i=>i.id===id);if(!confirm('Удалить «'+(it?it.title:'')+'»? Восстановить будет нельзя.'))return;const a=arrOf(k);a.splice(a.findIndex(i=>i.id===id),1);save();syncNews();toast('Удалено');render()}
 
 /* ---- проверка ---- */
 A.mod=()=>{
@@ -896,7 +929,10 @@ A.subs=()=>{
   const SRC=API.on&&S.serverSubs?S.serverSubs:S.subs;const q=subQ.toLowerCase();const list=SRC.filter(s=>!q||(s.name+s.phone+s.district).toLowerCase().includes(q));
   return `<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Подписчики (${SRC.length})</h3><button class="btn b-navy" onclick="exportSubs()">⬇ Скачать в Excel</button></div>
   <input id="subq" placeholder="🔎 Поиск по ФИО, телефону, району" value="${esc(subQ)}" style="margin:12px 0" oninput="subQ=this.value;clearTimeout(window._sq);window._sq=setTimeout(()=>{render();const i=$('#subq');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)">
-  <table><tr><th>ФИО</th><th>Дата рождения</th><th>Телефон</th><th>Район</th><th>Push</th><th>Регистрация</th><th></th></tr>${list.map(s=>`<tr><td>${esc(s.name||'—')}</td><td>${s.birth?new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.)':'—'}</td><td>${esc(s.phone)}</td><td>${esc(s.district||'—')}</td><td>${s.hasPush===false&&API.on?'<span class="small" style="color:var(--red)">не разрешил</span> ':''}${s.push?'вкл':'выкл'}</td><td>${fmtD(s.date)}</td><td class="acts"><button onclick="delSub('${s.id}')">🗑</button></td></tr>`).join('')}</table>
+  <div class="mlist">${list.map(s=>`<div class="mitem"><b class="mt">${esc(s.name||'—')}</b>
+    <div class="small">${s.birth?'д.р. '+new Date(s.birth).toLocaleDateString('ru-RU')+' ('+ageOf(s.birth)+' л.) · ':''}${esc(s.phone)} · ${esc(s.district||'—')}</div>
+    <div class="small muted">Уведомления: ${s.push?'вкл':'выкл'}${s.hasPush===false&&API.on?' (не разрешил в браузере)':''} · с ${fmtD(s.date)}</div>
+    <div class="mact"><button class="del" onclick="delSub('${s.id}')">🗑 Удалить</button></div></div>`).join('')||'<p class="muted">Никого не найдено.</p>'}</div>
   <p class="small muted">В статистике дополнительно учтены ${S.stat.base.toLocaleString('ru-RU')} демо-подписчиков.</p></div>`;
 };
 function delSub(id){if(!confirm('Удалить подписчика?'))return;if(API.on&&S.serverSubs){api('admin/subs/'+id,{method:'DELETE',admin:true}).then(()=>{S.serverSubs=S.serverSubs.filter(s=>s.id!==id);render()}).catch(()=>toast('Не удалось удалить'));return}S.subs=S.subs.filter(s=>s.id!==id);if(S.me&&S.me.id===id)S.me=null;save();render()}
@@ -930,6 +966,7 @@ function after(r){
     $('#schips').onclick=e=>{if(e.target.dataset.c===undefined)return;cat=e.target.dataset.c;[...e.currentTarget.children].forEach(b=>b.classList.toggle('on',b===e.target));draw()};$('#sq').oninput=draw;draw()}
   if(r==='admin'&&atab==='mat'&&$('#mt'))smiType();
   maybeAskReg(r);
+  if(typeof promoteScheduled==='function')try{promoteScheduled()}catch(e){}
   window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',()=>{closeModal();render()});
