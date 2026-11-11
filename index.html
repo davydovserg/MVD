@@ -938,11 +938,22 @@ A.subs=()=>{
 function delSub(id){if(!confirm('Удалить подписчика?'))return;if(API.on&&S.serverSubs){api('admin/subs/'+id,{method:'DELETE',admin:true}).then(()=>{S.serverSubs=S.serverSubs.filter(s=>s.id!==id);render()}).catch(()=>toast('Не удалось удалить'));return}S.subs=S.subs.filter(s=>s.id!==id);if(S.me&&S.me.id===id)S.me=null;save();render()}
 
 /* ---- рассылка ---- */
-A.push=()=>{const n=pubNews()[0];return `<div class="grid g2" style="align-items:start"><div class="card"><h3>Рассылка</h3>
-  <p class="muted small">Каждая новая новость сразу уходит уведомлением всем подписчикам. Кнопка ниже — отправить последнюю новость ещё раз.</p>
-  <p><b>Последняя новость:</b><br>${n?esc(n.title):'—'}</p><p class="small muted">Получателей: ${totalSubs().toLocaleString('ru-RU')} · push-уведомление на телефон или компьютер, бесплатно</p>
-  <button class="btn b-red" onclick="adminPushNow()">Отправить ещё раз</button></div>
-  <div class="card"><h3>Как это работает на сервере</h3><p class="small muted" style="margin:0">Web Push через сервис-воркер (Android, ПК, iPhone с iOS 16.4+ при добавлении сайта на экран «Домой»). СМС не используются. Отправка — с сервера Amvera в момент публикации.</p></div></div>`};
+A.push=()=>{
+  const list=S.news.filter(n=>n.status!=='mod').sort((a,b)=>(b.status==='scheduled')-(a.status==='scheduled')||(b.date||'').localeCompare(a.date||'')||(b.ts||0)-(a.ts||0));
+  return `<div class="card"><h3>Рассылка</h3>
+  <p class="muted small" style="margin-top:0">Каждая новость сразу уходит уведомлением всем подписчикам (${totalSubs().toLocaleString('ru-RU')}). Здесь все рассылки: можно отправить ещё раз, отменить запланированную или удалить.</p>
+  <div class="mlist">${list.length?list.map(x=>`<div class="mitem">
+    <div class="meta">${x.status==='scheduled'?statusTag('scheduled',x):x.status==='hidden'?'<span class="tag">Скрыто</span>':'<span class="tag green">Отправлено</span>'}${x.urgent?'<span class="tag red">Срочно</span>':''}${x.status!=='scheduled'&&x.date?'<span>'+fmtD(x.date)+'</span>':''}</div>
+    <b class="mt">${esc(x.title)}</b>
+    <div class="mact">${x.status==='pub'||!x.status?`<button onclick="adminPushOne('${x.id}')">🔁 Отправить ещё раз</button>`:''}${x.status==='scheduled'?`<button onclick="atab='mat';editRef={k:'news',id:'${x.id}'};render()">⏰ Изменить время</button>`:''}<button class="del" onclick="delMat('news','${x.id}')">🗑 ${x.status==='scheduled'?'Отменить и удалить':'Удалить'}</button></div>
+  </div>`).join(''):'<p class="muted">Рассылок пока нет.</p>'}</div>
+  <p class="small muted" style="margin-bottom:0">Удаление убирает новость с сайта. Уведомление, которое уже пришло людям на телефон, удалить нельзя — так устроены телефоны.</p></div>`};
+async function adminPushOne(id){
+  const n=S.news.find(x=>x.id===id);if(!n)return;
+  if(!confirm('Отправить «'+n.title+'» всем подписчикам ещё раз?'))return;
+  if(API.on){try{const r=await api('admin/push/'+id,{body:{},admin:true});toast('Отправлено: '+r.sent+' из '+r.total)}catch(e){toast('Не удалось отправить: '+e.message)}}
+  else{await showLocalNotice('⚠ МВД предупреждает',n.title,'./index.html#news/'+n.id);toast('Отправлено (демо: только на это устройство)')}
+}
 
 /* ============ РОУТЕР ============ */
 function render(){

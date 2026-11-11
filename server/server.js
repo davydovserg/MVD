@@ -126,6 +126,11 @@ app.put('/api/admin/news', admin, async (req, res) => {
 });
 app.get('/api/admin/subs', admin, (req, res) => res.json(db.subs.map(clean)));
 app.delete('/api/admin/subs/:id', admin, (req, res) => { db.subs = db.subs.filter(s => s.id !== req.params.id); save(); res.json({ ok: true }); });
+app.post('/api/admin/push/:id', admin, async (req, res) => {
+  const n = db.news.find(x => x.id === req.params.id && (!x.status || x.status === 'pub'));
+  if (!n) return res.status(404).json({ error: 'not found' });
+  res.json({ ok: true, ...(await sendAll(n)) });
+});
 app.post('/api/admin/push-now', admin, async (req, res) => {
   const n = latestNews(); if (!n) return res.status(404).json({ error: 'no news' });
   res.json({ ok: true, ...(await sendAll(n)) });
