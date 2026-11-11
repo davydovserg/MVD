@@ -68,7 +68,7 @@ async function sendAll(n) {
 /* ---------- API ---------- */
 const app = express();
 app.use(express.json({ limit: '15mb' }));
-const isAdmin = req => req.get('x-admin-login') === ADMIN_LOGIN && req.get('x-admin-pass') === ADMIN_PASS;
+const isAdmin = req => String(req.get('x-admin-login') || '').trim().toLowerCase() === ADMIN_LOGIN.toLowerCase() && String(req.get('x-admin-pass') || '').trim() === ADMIN_PASS;
 const admin = (req, res, next) => isAdmin(req) ? next() : res.status(401).json({ error: 'auth' });
 const normPh = p => String(p || '').replace(/\D/g, '').slice(-10);
 const clean = s => { const { subscription, ...rest } = s; return { ...rest, hasPush: !!subscription }; };

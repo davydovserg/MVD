@@ -684,8 +684,8 @@ const TILEBG={schemes:'#eef2f7',help:'var(--red-soft)',share:'var(--green-soft)'
 R.admin=()=>{
   if(!S.isAdmin) return `<div style="max-width:440px;margin:30px auto 0"><h1 style="text-align:center">Вход в панель</h1>
     <p class="muted" style="text-align:center;margin-top:0">Только для сотрудников УМВД.</p>
-    <div class="card"><label for="al">Логин</label><input id="al" autocomplete="username">
-    <label for="ap">Пароль</label><input id="ap" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')staffLogin()">
+    <div class="card"><label for="al">Логин</label><input id="al" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <label for="ap">Пароль</label><div class="row" style="flex-wrap:nowrap"><input id="ap" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')staffLogin()"><button type="button" class="btn b-ghost" style="padding:0 14px" title="Показать пароль" onclick="const i=$('#ap');i.type=i.type==='password'?'text':'password'">👁</button></div>
     <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="staffLogin()">Войти</button></div></div>`;
   const modN=[...S.news,...S.memos,...S.schemes].filter(x=>x.status==='mod').length;
   const waitU=0;
@@ -694,9 +694,9 @@ R.admin=()=>{
   <div class="adm"><nav class="aside">${T.map(([k,i,v,n])=>`<button class="${atab===k?'on':''}" onclick="atab='${k}';editRef=null;render()"><span>${i}</span>${v}${n?`<em>${n}</em>`:''}</button>`).join('')}</nav><section>${A[atab]()}</section></div>`;
 };
 async function staffLogin(){
-  const l=$('#al').value.trim(),pw=$('#ap').value;let ok=false;
+  const l=$('#al').value.trim().toLowerCase(),pw=$('#ap').value.trim();let ok=false;
   if(API.on){adminLg=l;adminPw=pw;try{ok=(await api('admin/login',{body:{},admin:true})).ok}catch(e){}}
-  else ok=l===ADMIN_LOGIN&&pw===ADMIN_PASS;
+  else ok=l===ADMIN_LOGIN.toLowerCase()&&pw===ADMIN_PASS;
   if(!ok){toast('Неверный логин или пароль');return}
   try{sessionStorage.setItem('pred_apw',pw);sessionStorage.setItem('pred_alg',l)}catch(e){}
   S.isAdmin=true;S.smiMe=null;save();render();if(API.on)loadAdminData();
