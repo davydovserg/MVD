@@ -570,6 +570,7 @@ function unsub(){if(!confirm('Отписаться от ежедневных п�
 
 /* ---------- ПОРТАЛ СМИ ---------- */
 R.smi=()=>{
+  return R.admin();
   if(!S.smiMe) return R.admin();
   const u=S.smiMe;
   const mine=[...S.news.map(x=>({...x,k:'Новость'})),...S.memos.map(x=>({...x,k:'Памятка'})),...S.schemes.filter(x=>x.author).map(x=>({...x,k:'Схема'}))].filter(x=>x.authorId===u.id);
@@ -619,26 +620,19 @@ let atab='stat', editRef=null, matFilter='all', subQ='';
 const ADMIN_LOGIN='admin', ADMIN_AUTHOR='УМВД по г. Новороссийску';
 const TILEBG={schemes:'#eef2f7',help:'var(--red-soft)',share:'var(--green-soft)',memos:'var(--amber-soft)',news:'#eef2f7'};
 R.admin=()=>{
-  if(!S.isAdmin&&S.smiMe) return R.smi();
   if(!S.isAdmin) return `<div style="max-width:440px;margin:30px auto 0"><h1 style="text-align:center">Вход в панель</h1>
-    <p class="muted" style="text-align:center;margin-top:0">Только для сотрудников. Учётные записи выдаёт администратор.</p>
+    <p class="muted" style="text-align:center;margin-top:0">Только для сотрудников УМВД.</p>
     <div class="card"><label for="al">Логин</label><input id="al" autocomplete="username">
     <label for="ap">Пароль</label><input id="ap" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')staffLogin()">
     <button class="btn big b-navy" style="width:100%;margin-top:14px" onclick="staffLogin()">Войти</button></div></div>`;
   const modN=[...S.news,...S.memos,...S.schemes].filter(x=>x.status==='mod').length;
   const waitU=0;
-  const T=[['stat','📊','Статистика и отчёты'],['mat','📰','Новости и материалы'],['mod','✅','Проверка',modN],['acc','👥','Учётные записи',waitU],['sec','🧩','Разделы сайта'],['subs','📱','Подписчики'],['push','🔔','Рассылка']];
-  return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1 style="margin:0">Панель управления</h1><p class="muted small" style="margin:2px 0 0">Пресс-служба УМВД России по г. Новороссийску · администратор</p></div><button class="btn b-ghost" onclick="S.isAdmin=false;save();render()">Выйти</button></div>
+  const T=[['stat','📊','Статистика и отчёты'],['mat','📰','Новости и материалы'],['sec','🧩','Разделы сайта'],['subs','📱','Подписчики'],['push','🔔','Рассылка']];
+  return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><div><h1 style="margin:0">Панель управления</h1><p class="muted small" style="margin:2px 0 0">Пресс-служба УМВД России по г. Новороссийску </p></div><button class="btn b-ghost" onclick="S.isAdmin=false;save();render()">Выйти</button></div>
   <div class="adm"><nav class="aside">${T.map(([k,i,v,n])=>`<button class="${atab===k?'on':''}" onclick="atab='${k}';editRef=null;render()"><span>${i}</span>${v}${n?`<em>${n}</em>`:''}</button>`).join('')}</nav><section>${A[atab]()}</section></div>`;
 };
 function staffLogin(){
-  const l=$('#al').value.trim(),pw=$('#ap').value;
-  if(l===ADMIN_LOGIN&&pw===ADMIN_PASS){S.isAdmin=true;S.smiMe=null;save();render();return}
-  const u=S.smiUsers.find(x=>x.login===l);
-  if(!u||u.pass!==pw){toast('Неверный логин или пароль');return}
-  if(u.status==='blocked'){toast('Доступ закрыт. Обратитесь к администратору');return}
-  if(u.status!=='ok'){toast('Неверный логин или пароль');return}
-  S.smiMe=u;S.isAdmin=false;save();render();
+  if($('#al').value.trim()===ADMIN_LOGIN&&$('#ap').value===ADMIN_PASS){S.isAdmin=true;S.smiMe=null;save();render()}else toast('Неверный логин или пароль');
 }
 const adminLogin=staffLogin;
 const A={};
@@ -669,7 +663,7 @@ function exportReport(){
   const d=statData();
   const rows=[['Отчёт: Предупреждён — Новороссийск'],['Сформирован',new Date().toLocaleString('ru-RU')],[],
     ['ОСНОВНЫЕ ПОКАЗАТЕЛИ','Значение'],['Подписчиков всего',d.subs],['Новых за сегодня',d.today],['Отправлено push-уведомлений',d.sent],['Открывают push, %',d.open],['Просмотров новостей',d.views],['Переслали близким, раз',d.shares],
-    ['Опубликовано новостей',d.counts.news],['Памяток',d.counts.memo],['Схем в архиве',d.counts.scheme],['Авторов СМИ с доступом',d.counts.smi],[],
+    ['Опубликовано новостей',d.counts.news],['Памяток',d.counts.memo],['Схем в архиве',d.counts.scheme],[],
     ['НОВЫЕ ПОДПИСЧИКИ ЗА НЕДЕЛЮ','Человек'],...Object.entries(d.week),[],
     ['ПО РАЙОНАМ','Подписчиков'],...Object.entries(d.dist),[],
     ['ВОЗРАСТ','% подписчиков'],...Object.entries(d.ages),[],
@@ -691,7 +685,7 @@ function printReport(){
   const w=window.open('','_blank');if(!w){toast('Разрешите всплывающие окна');return}
   w.document.write(`<!doctype html><meta charset="utf-8"><title>Отчёт ${today()}</title><style>body{font:14px/1.45 Arial,sans-serif;color:#14202e;max-width:800px;margin:30px auto;padding:0 20px}h1{font-size:22px;margin:0}h3{margin:22px 0 6px;font-size:15px;color:#0e2a47}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #ddd;padding:6px 4px;text-align:left}td:last-child{text-align:right}.k{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.k div{border:1px solid #ddd;border-radius:8px;padding:10px}.k b{display:block;font-size:22px}</style>
   <h1>Отчёт: Предупреждён — Новороссийск</h1><p>Пресс-служба УМВД России по г. Новороссийску · сформирован ${new Date().toLocaleString('ru-RU')}</p>
-  <div class="k"><div>Подписчиков<b>${d.subs.toLocaleString('ru-RU')}</b></div><div>Открывают push<b>${d.open}%</b></div><div>Переслали близким<b>${d.shares.toLocaleString('ru-RU')}</b></div><div>Просмотров новостей<b>${d.views.toLocaleString('ru-RU')}</b></div><div>Новостей<b>${d.counts.news}</b></div><div>Авторов СМИ<b>${d.counts.smi}</b></div></div>
+  <div class="k"><div>Подписчиков<b>${d.subs.toLocaleString('ru-RU')}</b></div><div>Открывают push<b>${d.open}%</b></div><div>Переслали близким<b>${d.shares.toLocaleString('ru-RU')}</b></div><div>Просмотров новостей<b>${d.views.toLocaleString('ru-RU')}</b></div><div>Новостей<b>${d.counts.news}</b></div><div>Памяток<b>${d.counts.memo}</b></div></div>
   ${tb('Новые подписчики за неделю',d.week)}${tb('По районам',d.dist)}${tb('Возраст подписчиков',d.ages,'%')}${tb('Куда пересылают',d.ch)}
   <h3>Новости</h3><table><tr><th>Новость</th><th>Автор</th><th>Просмотры</th></tr>${d.news.map(n=>`<tr><td>${esc(n.title)}</td><td>${esc(n.author)}</td><td>${(n.views||0).toLocaleString('ru-RU')}</td></tr>`).join('')}</table>`);
   w.document.close();w.focus();setTimeout(()=>w.print(),400);
